@@ -16,30 +16,12 @@
     </style>
   </head>
   <body>
-    <ul id="messages"></ul>
-    <div><h1>WELCOME TO GREG CHAT</h1></div>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-
+    <h1 id="total">0</h1>
+    <h1 id="gameStatus">Waiting for game</h1>
+    <h1>Room Tick: </h1>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script> 
-    <script>
-        //client socket -- connects to the host that calls the page by default
-
-    $(function () {
-        var socket = io('https://boiling-hollows-90358.herokuapp.com/');
-        $('form').submit(function(){
-          socket.emit('chat message', $('#m').val());
-          $('#m').val('');
-          return false;
-        });
-        socket.on('chat message', function(msg){
-          $('#messages').append($('<li>').text(msg));
-          window.scrollTo(0, document.body.scrollHeight);
-        });
-      });
-    </script>
-
+    <script src="index.js"></script>
   </body>
 </html>
+
