@@ -17,7 +17,9 @@ setInterval( function() {
     console.log('ROOMS: '+ lobby._rooms.length);
     lobby._rooms.forEach((aRoom) => { 
         aRoom._getClientCount().then(function(resolve, reject) {
-            console.log('ROOM ' + aRoom.id  +' : ' + resolve);
+            console.log(
+                'ROOM ' + aRoom.id  +' : ' + resolve
+            );
         })
     })
 } , 2000)

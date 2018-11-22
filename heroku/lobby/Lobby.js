@@ -1,4 +1,5 @@
 var roomHandler = require('../room/index');
+var array = require('lodash/array');
 
 function Lobby(io) {
     this._rooms = [];
@@ -14,23 +15,28 @@ function Lobby(io) {
             room.join(socket);
 
             socket.on('disconnecting', () => {
+                
                 this._deleteRoomIfNoClients(socket);
             });
         });
     }
     this._deleteRoomIfNoClients = async function(socket) {
-        const idOfRoom = this._getRoomIdOfSocket(socket);
+        const roomIdsToDelete = [];
+        const idOfRoom = this._getRoomIdOfSocket(socket)[0];
         for (const [index, value] of this._rooms.entries()) {
-            if(value.id != idOfRoom) {
+            if (value.id != idOfRoom) {
                 continue;
             }
             if (
                 await value._getClientCount() -1 <= 0 &&
                 this._rooms.length > 1
             ) {
-                this._rooms.splice(index, 1);
+                roomIdsToDelete.push(value.id);
             }  
         }
+        array.remove(this._rooms,(aRoom)=>{
+            return roomIdsToDelete.includes(aRoom.id);
+        })
     }
     this._getRoomIdOfSocket = function(socket) {
         return Object.keys(socket.rooms)
