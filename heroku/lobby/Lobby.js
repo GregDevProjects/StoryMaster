@@ -4,10 +4,12 @@ var array = require('lodash/array');
 function Lobby(io) {
     this._rooms = [];
     this._io = io;
-    this.initLobby = function () {
+    this.createRoom = function () {
+        const newRoom = roomHandler.createRoom(this._io);
         this._rooms.push(
-            roomHandler.createRoom(this._io)
+            newRoom
         )
+        return newRoom;
     }
     this.assignClientsOnConnectAndDisconnect = function () {
         this._io.on('connection', async (socket) => {
@@ -48,9 +50,7 @@ function Lobby(io) {
                 return (aRoom);
             }
         }
-        const newRoom = roomHandler.createRoom(this._io);
-        this._rooms.push(newRoom);
-        return (newRoom);
+        return this.createRoom();
     }
 
 }
