@@ -1,6 +1,7 @@
 var assert = require('assert');
 var client = require('socket.io-client');
 var game = require('../game/index');
+var room = require('../room/Room')
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * max) + min;
@@ -36,7 +37,7 @@ describe('Lobby managing rooms', function() {
 
     it('creates new rooms when the max users is reached', function(done) {
         const clients = getRandomInt(5,15);
-        const MAX_USERS_IN_ROOM = testGame.lobby._rooms[0]._MAX_USERS_IN_ROOM;
+        const MAX_USERS_IN_ROOM =  room.MAX_USERS_IN_ROOM;
 
         for (let i = 0; i < clients; i++) {
             client('http://localhost:3000/');

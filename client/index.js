@@ -1,30 +1,42 @@
  //client socket -- connects to the host that calls the page by default
 $(function () {
-    var socket = io('http://localhost:3000/lobby');
-    
-    $('form').submit(function(){
-      socket.emit('chat message', $('#m').val());
-      $('#m').val('');
-      return false;
+    var socket = io('http://localhost:3000');
+
+    $('.send').click(function(){   
+        socket.emit(  
+            'msg',
+            $('textarea').val()
+        );
     });
 
-    socket.on('chat message', function(msg){
-      $('#messages').append($('<li>').text(msg));
-      window.scrollTo(0, document.body.scrollHeight);
+    socket.on('waiting', function(msg) {
+       // alert('yo');
+        $('#gameStatus').text(msg);
+        showHideWriter(2)
     });
 
-    socket.on('connected', function(totalUsers){
-        $('#total').text(totalUsers);
-        
-    });     
-
-    socket.on('create room', function(roomName){
-        $('#gameStatus').text('in room: ' + roomName);
-        
+    socket.on('turnTimer', function(msg){
+        $('#gameStatus').text(
+            msg.seconds + 
+            ' left to ' +
+            getTurnTypeText(msg.type)
+        );
+        showHideWriter(msg.type);
     }); 
 
-    socket.on('in_room', function(msg){
-        console.log(msg);
-        
-    }); 
+    function showHideWriter(type) {
+        if (type == 1) {
+            $('.send').show();
+            return;
+        }
+
+        $('.send').hide();
+    }
+
+    function getTurnTypeText(type) {
+        if (type == 1) {
+            return 'write';
+        }
+        return 'vote';
+    }
   });

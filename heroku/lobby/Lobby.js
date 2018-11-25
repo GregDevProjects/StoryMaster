@@ -14,30 +14,43 @@ function Lobby(io) {
     this.assignClientsOnConnectAndDisconnect = function () {
         this._io.on('connection', async (socket) => {
             const room = await this._getRoomForClient();
+            this._broadcastConnectedToRoom(socket.id);
             room.join(socket);
-
-            socket.on('disconnecting', () => {
+            socket.on('disconnecting', async () => { 
                 
-                this._deleteRoomIfNoClients(socket);
-            });
+                const roomWasDeleted = await this._deleteRoomIfNoClients(socket);
+                if (!roomWasDeleted) {
+                    room.onUserDisconnect();
+                }
+            });          
         });
     }
-    this._deleteRoomIfNoClients = async function(socket) {
-        const roomIdsToDelete = [];
-        const idOfRoom = this._getRoomIdOfSocket(socket)[0];
-        for (const [index, value] of this._rooms.entries()) {
-            if (value.id != idOfRoom) {
-                continue;
+    this._broadcastConnectedToRoom = function(roomId) {
+        io.to(roomId).emit('waiting', 'connected');
+    }
+    //TODO: refactor, it's too large and I'm not sure if we need to put the rooms to delete in an array
+    this._deleteRoomIfNoClients = (socket) => {
+        return new Promise(async (resolve, reject) => {
+            const roomIdsToDelete = [];
+            const idOfRoom = this._getRoomIdOfSocket(socket)[0];
+            for (const [index, value] of this._rooms.entries()) {
+                if (value.id != idOfRoom) {
+                    continue;
+                }
+                if (
+                    await value._getClientCount() -1 <= 0 &&
+                    this._rooms.length > 1
+                ) {
+                    roomIdsToDelete.push(value.id);
+                }  
             }
-            if (
-                await value._getClientCount() -1 <= 0 &&
-                this._rooms.length > 1
-            ) {
-                roomIdsToDelete.push(value.id);
-            }  
-        }
-        array.remove(this._rooms,(aRoom)=>{
-            return roomIdsToDelete.includes(aRoom.id);
+            if (roomIdsToDelete.length <= 0) {
+                resolve(false);
+            }
+            array.remove(this._rooms,(aRoom)=>{
+                return roomIdsToDelete.includes(aRoom.id);
+            })
+            resolve(true);
         })
     }
     this._getRoomIdOfSocket = function(socket) {

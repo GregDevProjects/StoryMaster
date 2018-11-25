@@ -1,0 +1,6 @@
+Make tests and refactor
+- see todos for refactoring
+- test:
+    game starts when full
+    turn logic 
+    people leaving 
