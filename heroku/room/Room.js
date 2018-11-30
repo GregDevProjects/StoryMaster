@@ -17,23 +17,24 @@ function Room(io) {
         }) 
     }
     this.join = async function (socket) {
+        //console.log('joined');
         socket.join(this.id);
         socket.on('msg', (data) => {
             //console.log(data);
             this._turns.onWritingReceived(socket.id, data);
         })
-        this._broadcastWaitingStatus();
+        this._broadcastWaitingStatus(socket.id);
     }
-    //TODO: refactor, the name of this function is misleading
-    this._broadcastWaitingStatus = async function() {
-        if (await this.isAnotherPlayerNeeded()) {
+    //TODO: refactor, the name of this function is misleading. Sometimes it broadcasts to room or individual
+    this._broadcastWaitingStatus = async function(newUserId) {
+        if (await this._isEnoughUsersToStart()) {
             const message = this._turns.isPaused ? 
-                'Not enough players to continue, waiting for another...' : 
-                'connected to room, waiting for players';
-            io.to(this.id).emit('waiting', message);
+                GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE : 
+                GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE;
+            io.to(newUserId).emit('waiting', message);
             return;
         } 
-        this._io.to(this.id).emit('waiting', 'connected to room, game starting');
+        this._io.to(this.id).emit('waiting', GAME_START_MESSAGE);
         this._startTurn();
     }
     this._startTurn = function() {
@@ -44,22 +45,38 @@ function Room(io) {
         this._turns.resumeTurns();
     }
     this.onUserDisconnect = async() => {
-        if (await this._getClientCount() >= MIN_USERS_IN_ROOM) {
+        const usersInRoom = await this._getClientCount();
+        if (usersInRoom >= MIN_USERS_IN_ROOM) {
+            return;
+        }
+
+        if (usersInRoom <= 0) {
+            this._turns.reset();
             return;
         }
         this._turns.pauseTurns();
 
     }
-    this.isAnotherPlayerNeeded = async function () {
+    this.canAnotherUserJoin = async () => {
         return await this._getClientCount() < MAX_USERS_IN_ROOM;
+    }
+    this._isEnoughUsersToStart = async () => {
+        return await this._getClientCount() < MIN_USERS_IN_ROOM;
     }
 }
 
-const MAX_USERS_IN_ROOM = 3;
+const MAX_USERS_IN_ROOM = 5;
 const MIN_USERS_IN_ROOM = 3;
+const GAME_START_MESSAGE = "connected to room, game starting";
+const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'Not enough players to start, waiting for another...';
+const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'Not enough players to continue, waiting for another...';
 
 module.exports = {
     Room: Room,
-    MAX_USERS_IN_ROOM: MAX_USERS_IN_ROOM
+    MAX_USERS_IN_ROOM: MAX_USERS_IN_ROOM,
+    GAME_START_MESSAGE: GAME_START_MESSAGE,
+    MIN_USERS_IN_ROOM: MIN_USERS_IN_ROOM,
+    GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE: GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE,
+    GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE: GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE
 }
 

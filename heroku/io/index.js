@@ -1,5 +1,6 @@
 var app = require('express')();
-var http = require('http').Server(app);
+require('http-shutdown').extend();
+var http = require('http').Server(app).withShutdown();
 var io = require('socket.io')(http);
 var port = 3000;
 

@@ -9,6 +9,12 @@ exports.Turn = function Turn(io, roomId) {
     this.turnsHaveStarted = false;
     this.isPaused = false;
 
+    this.reset = function() {
+        this.isPaused = false;
+        this._stopTimer();
+        //TODO: add logic to clear rounds here
+    }
+
     this.startTurns = function() {
         this.turnsHaveStarted = true;
         this.currentRound = new round.Round(this._round);
@@ -73,6 +79,7 @@ exports.Turn = function Turn(io, roomId) {
     }
 
     this._stopTimer = function() {
+        //console.log('timer_stopped')
         clearInterval(this.turnTimer);
     }
 }

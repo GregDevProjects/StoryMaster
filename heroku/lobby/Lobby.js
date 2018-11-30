@@ -59,7 +59,7 @@ function Lobby(io) {
     }
     this._getRoomForClient = async function () {
         for (const aRoom of this._rooms) {
-            if (await aRoom.isAnotherPlayerNeeded()) {
+            if (await aRoom.canAnotherUserJoin()) {
                 return (aRoom);
             }
         }
