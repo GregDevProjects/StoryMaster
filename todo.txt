@@ -1,6 +1,9 @@
 Make tests and refactor
 - see todos for refactoring
+- game shows winner after all the votes 
+- game can handle looping turns  
+
 - test:
-    game starts when full
-    turn logic 
-    people leaving 
+    game gets votes 
+    game get writings 
+    game calculate winner 

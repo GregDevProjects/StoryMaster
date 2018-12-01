@@ -2,7 +2,7 @@ var assert = require('assert');
 var client = require('socket.io-client');
 var game = require('../game/index');
 var room = require('../room/Room');
-
+var turn = require('../room/Turn');
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * max) + min;
@@ -35,19 +35,13 @@ after(function() {
 
 afterEach(function(done){
     kickAllClients();
-    // testGame.http.shutdown(function() {
-    //     console.log('Everything is cleanly shutdown.');
-    //     done();
-    // });
     setTimeout(function() {
-        
         done();
     }, 200);    
 });
 
 beforeEach(function(done){
      kickAllClients();
-    // testGame = game.startIoAndLobby();
     setTimeout(function() {
         done();
     }, 200);    
@@ -156,4 +150,111 @@ describe('Room managing clients', function() {
             done();
         }, 200)
     });
+});
+
+function joinRoomWithMinPlayersSubmitWritingsImmediately() {
+    for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
+        let c = client('http://localhost:3000/').on('waiting', (msg) => {
+            if (msg === room.GAME_START_MESSAGE) {
+                c.emit(  
+                    'msg',
+                    'this is a writing'
+                )
+            }
+        });
+    }
+}
+
+describe('Turn broadcasting to clients', function() {
+    //same user can't vote or write twice 
+    //displays the right round winner based on votes <-
+    //what happens if a player leaves?
+
+
+
+    it('broadcasts vote status after receiving all writings', function(done) {
+        let broadcastedClients = 0;
+        for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
+            let c = client('http://localhost:3000/').on('waiting', (msg) => {
+                if (msg === room.GAME_START_MESSAGE) {
+                    c.emit(  
+                        'msg',
+                        'this is a writing'
+                    )
+                }
+            });
+            c.on('vote', function(votes){
+                broadcastedClients++;
+            });
+        }
+        setTimeout(() => {
+            assert.equal(
+                broadcastedClients, 
+                room.MIN_USERS_IN_ROOM
+            );
+            done();
+        }, 100)
+    });
+
+    it('broadcasts round over status after receiving all votes', function(done) {
+        let broadcastedClients = 0;
+
+        for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
+            let c = client('http://localhost:3000/').on('waiting', (msg) => {
+                if (msg === room.GAME_START_MESSAGE) {
+                    c.emit(  
+                        'msg',
+                        'this is a writing'
+                    )
+                }
+            });
+            c.on('vote', function(votes){
+                c.emit(
+                    'vote',
+                    votes[getRandomInt(0,room.MIN_USERS_IN_ROOM - 1)].user
+                )
+            });
+            c.on('roundOver', function(stats){
+                broadcastedClients++;
+            });
+        }
+        setTimeout(() => {
+            assert.equal(
+                broadcastedClients, 
+                room.MIN_USERS_IN_ROOM
+            );
+            done();
+        }, 100)
+    });
+
+    it('displays the voting options as writings that were not written by the same user', function(done) {
+        let clientsThatSeeTheirOwnWriting = 0;
+
+        for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
+            let c = client('http://localhost:3000/').on('waiting', (msg) => {
+                if (msg === room.GAME_START_MESSAGE) {
+                    c.emit(  
+                        'msg',
+                        i
+                    )
+                }
+            });
+            c.on('vote', function(votes){
+                votes.forEach(function(aVote){
+                    if(aVote.message == i) {
+                        clientsThatSeeTheirOwnWriting++
+                    }
+                })
+            });
+
+        }
+        setTimeout(() => {
+            assert.equal(
+                clientsThatSeeTheirOwnWriting, 
+                0
+            );
+            done();
+        }, 100)
+    });
+  
 });

@@ -17,8 +17,27 @@
   </head>
   <body>
     <h1 id="gameStatus">Waiting to connect</h1>
-    <textarea style="display:none" class="send"></textarea>
-    <button style="display:none" class="send">send</button>
+    <div style="display:none" id ="writing">
+        <textarea class="send"></textarea>
+        <button id="submit-msg" class="send">send</button>
+    </div>
+    <div style="display:none" id="voting">
+        <table>
+            <tr>
+                <th>Writing</th>
+                <th>Vote</th>
+            </tr>
+        </table>
+    </div>
+    <div style="display:none" id="end-round-display">
+        <table>
+            <tr>
+                <th>User</th>
+                <th>Writing</th>
+                <th>Votes</th>
+            </tr>
+        </table>        
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script> 
     <script src="index.js"></script>
