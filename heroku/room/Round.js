@@ -8,9 +8,6 @@ exports.Round = function(number) {
         if (this._hasUserAlreadyWritten(user)) {
             return;
         }
-        console.log(
-            'added writing'
-        )
         this.writings.push({message: message, user: user})
     }
 
@@ -18,7 +15,6 @@ exports.Round = function(number) {
         if (this._hasUserAlreadyVoted(user)) {
             return;
         }
-        console.log('added vote');
         this.votes.push({user, vote})
     }
 

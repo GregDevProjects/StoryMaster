@@ -12,3 +12,7 @@ exports.listen = () => {
 }
 
 exports.io = io;
+
+exports.broadcastToRoomId = (roomId, status, message = null ) => {
+    io.to(roomId).emit(status, message);
+}

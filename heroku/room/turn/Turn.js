@@ -1,5 +1,17 @@
-round = require('./Round');
-//BUG -> can't accept writings at 0
+var round = require('../Round');
+var broadcastToRoomId = require('../../io/index').broadcastToRoomId;
+
+const TurnStatus = {
+    WRITING: 1,
+    VOTING: 2,
+    DISPLAYING_INFO: 3
+}
+
+const SECONDS_TO_WRITE = 15;
+const SECONDS_TO_VOTE = 10;
+const SECONDS_TO_SHOW_ROUND_RESULTS = 5;
+
+exports.TurnStatus = TurnStatus;
 exports.Turn = function Turn(io, roomId) { 
     this._io = io;
     this._turnStatus;
@@ -20,12 +32,16 @@ exports.Turn = function Turn(io, roomId) {
     this.startTurns = function() {
         this.turnsHaveStarted = true;
         this.currentRound = new round.Round(this._round);
-        this._startWritingTimer();
+        this._doARound();
     }
     
     this.pauseTurns = function() {
         this._stopTimer();
-        this._broadcastPause();
+        broadcastToRoomId(
+            this._roomId, 
+            'waiting', 
+            'Not enough players to continue, waiting for another...'
+        );
         this.isPaused = true;
     }
 
@@ -46,7 +62,7 @@ exports.Turn = function Turn(io, roomId) {
             return;    
         }
         this._stopTimer()
-        this.resolveOutside();
+        this.stopTimerEarly();
     }
 
     this.onVoteReceived = function(user, vote, clientCount) {
@@ -58,7 +74,7 @@ exports.Turn = function Turn(io, roomId) {
             return;
         }    
         this._stopTimer()
-        this.resolveOutside();   
+        this.stopTimerEarly();   
     }
 
     this._haveAllUsersFinishedVoting = function(clientsInRoom) {
@@ -69,7 +85,7 @@ exports.Turn = function Turn(io, roomId) {
         return clientsInRoom == this.currentRound.writings.length;
     }
 
-    this._startWritingTimer = async function() {
+    this._doARound = async function() {
         this._turnStatus = TurnStatus.WRITING;
         await this._broadcastCountdown(TurnStatus.WRITING, SECONDS_TO_WRITE);
 
@@ -78,23 +94,13 @@ exports.Turn = function Turn(io, roomId) {
         await this._broadcastCountdown(TurnStatus.VOTING, SECONDS_TO_VOTE);
 
         this._turnStatus = TurnStatus.DISPLAYING_INFO;
-        this._broadcastEndRoundStats();
-        console.log(this.currentRound.getRoundResultsWithWinner());
-        await this._broadcastCountdown(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
-    }
-
-    this._broadcastEndRoundStats = () => {
-        this._io.to(this._roomId).emit(
+        broadcastToRoomId(
+            this._roomId, 
             'roundOver', 
             this.currentRound.getRoundResultsWithWinner()
-        ); 
-    }
+        );
 
-    this._broadcastPause = () => {
-        this._io.to(this._roomId).emit(
-            'waiting', 
-            'Not enough players to continue, waiting for another...'
-        );    
+        await this._broadcastCountdown(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
     }
 
     //can't broadcast a writing to the same user that wrote it 
@@ -115,46 +121,34 @@ exports.Turn = function Turn(io, roomId) {
         });
 
         broadcasts.forEach((aBroadcast) => {
-            this._io.to(aBroadcast.socketId).emit('vote', 
-                aBroadcast.writings
-            );   
+            broadcastToRoomId(aBroadcast.socketId, 'vote', aBroadcast.writings);
         });
     }
 
     this._broadcastCountdown = function(type, seconds) {
         return new Promise((resolve, reject) => {
-            this.resolveOutside = resolve;
+            this.stopTimerEarly = resolve;
             this.countdown = seconds;
             this.turnTimer = setInterval(() => { 
                 if (this.countdown <= 0) {
                     this._stopTimer();
                     resolve();
                 }
-                
-                this._io.to(this._roomId).emit('turnTimer', {
-                    seconds: this.countdown,
-                    type: type
-                });
+                broadcastToRoomId(
+                    this._roomId, 
+                    'turnTimer', 
+                    {
+                        seconds: this.countdown,
+                        type: type
+                    }
+                );
+
                 this.countdown--;
             }, 1000);
         })
     }
 
     this._stopTimer = function() {
-        //console.log('timer_stopped')
         clearInterval(this.turnTimer);
-        //this.turnTimer = false;
-        
     }
 }
-
-const TurnStatus = {
-    WRITING: 1,
-    VOTING: 2,
-    DISPLAYING_INFO: 3
-}
-exports.TurnStatus = TurnStatus;
-
-const SECONDS_TO_WRITE = 15;
-const SECONDS_TO_VOTE = 10;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 5;

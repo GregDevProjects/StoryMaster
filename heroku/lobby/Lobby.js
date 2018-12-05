@@ -1,5 +1,6 @@
 var roomHandler = require('../room/index');
 var array = require('lodash/array');
+var broadcastToRoomId = require('../io/index').broadcastToRoomId;
 
 function Lobby(io) {
     this._rooms = [];
@@ -14,7 +15,7 @@ function Lobby(io) {
     this.assignClientsOnConnectAndDisconnect = function () {
         this._io.on('connection', async (socket) => {
             const room = await this._getRoomForClient();
-            this._broadcastConnectedToRoom(socket.id);
+            broadcastToRoomId(socket.id, 'waiting', 'connected');
             room.join(socket);
             socket.on('disconnecting', async () => { 
                 
@@ -24,9 +25,6 @@ function Lobby(io) {
                 }
             });          
         });
-    }
-    this._broadcastConnectedToRoom = function(roomId) {
-        io.to(roomId).emit('waiting', 'connected');
     }
     //TODO: refactor, it's too large and I'm not sure if we need to put the rooms to delete in an array
     this._deleteRoomIfNoClients = (socket) => {

@@ -2,7 +2,7 @@ var assert = require('assert');
 var client = require('socket.io-client');
 var game = require('../game/index');
 var room = require('../room/Room');
-var turn = require('../room/Turn');
+var turn = require('../room/turn/Turn');
 
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * max) + min;

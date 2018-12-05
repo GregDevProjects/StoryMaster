@@ -1,5 +1,6 @@
 var uniqid = require('uniqid');
-var turn = require('./Turn')
+var turn = require('./turn/Turn')
+var broadcastToRoomId = require('../io/index').broadcastToRoomId;
 
 const MAX_USERS_IN_ROOM = 5;
 const MIN_USERS_IN_ROOM = 3;
@@ -52,11 +53,11 @@ function Room(io) {
         const message = this._turns.isPaused ? 
             GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE : 
             GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE;
-        io.to(newUserId).emit('waiting', message);  
+        broadcastToRoomId(newUserId, 'waiting', message);
     }
 
     this._startOrResumeTurns = function() {
-        this._io.to(this.id).emit('waiting', GAME_START_MESSAGE);
+        broadcastToRoomId(this.id, 'waiting', GAME_START_MESSAGE);
         if (!this._turns.turnsHaveStarted) {
             this._turns.startTurns();
             return;
