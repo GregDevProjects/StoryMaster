@@ -1,6 +1,10 @@
 var _ = require('lodash');
 
-exports.Round = function(number) {
+module.exports = {
+    Round : Round
+}
+
+function Round(number) {
     this.number = number;
     this.writings = [];
     this.votes = [];

@@ -1,12 +1,16 @@
-var roomHandler = require('../room/index');
+var Room = require('../room/Room').Room;
 var array = require('lodash/array');
 var broadcastToRoomId = require('../io/index').broadcastToRoomId;
+
+module.exports = {
+    Lobby : Lobby
+}
 
 function Lobby(io) {
     this._rooms = [];
     this._io = io;
     this.createRoom = function () {
-        const newRoom = roomHandler.createRoom(this._io);
+        const newRoom = new Room(this._io);
         this._rooms.push(
             newRoom
         )
@@ -64,8 +68,4 @@ function Lobby(io) {
         return this.createRoom();
     }
 
-}
-
-module.exports = {
-    Lobby: Lobby
 }

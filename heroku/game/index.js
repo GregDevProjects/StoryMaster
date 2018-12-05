@@ -1,9 +1,14 @@
-const lobbyHandler = require('../lobby/index'); 
+const Lobby = require('../lobby/Lobby').Lobby; 
 const ioHandler = require('../io/index');
 
-exports.startIoAndLobby = () => {
+module.exports = {
+    startIoAndLobby : startIoAndLobby,
+    startIntervalDebugging : startIntervalDebugging
+}
+
+function startIoAndLobby(){
     const http = ioHandler.listen();
-    const lobby = lobbyHandler.createLobby(ioHandler.io)
+    const lobby = new Lobby(ioHandler.io);
     lobby.createRoom();
     lobby.assignClientsOnConnectAndDisconnect();
     return { 
@@ -12,7 +17,7 @@ exports.startIoAndLobby = () => {
     }
 }
 
-exports.startIntervalDebugging = (lobby) => {
+function startIntervalDebugging(lobby){
     setInterval( function() {
         console.log('ROOMS: '+ lobby._rooms.length);
         lobby._rooms.forEach((aRoom) => { 

@@ -4,15 +4,19 @@ var http = require('http').Server(app).withShutdown();
 var io = require('socket.io')(http);
 var port = 3000;
 
-exports.listen = () => {
+module.exports = {
+    listen : listen,
+    io : io,
+    broadcastToRoomId : broadcastToRoomId
+}
+
+function listen() {
     http.listen(port, function(){
         console.log('listening on *:' + port);
     });
     return http;
 }
 
-exports.io = io;
-
-exports.broadcastToRoomId = (roomId, status, message = null ) => {
+function broadcastToRoomId(roomId, status, message = null ) {
     io.to(roomId).emit(status, message);
 }
