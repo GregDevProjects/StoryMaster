@@ -4,7 +4,9 @@
 //2. users leaving/joining 
 var round = require('./Round');
 var broadcastToRoomId = require('../../io/index').broadcastToRoomId;
-var timerBroadcaster = require('./CountdownTimer').TimerBroadcaster
+var timerBroadcaster = require('./CountdownTimer').TimerBroadcaster;
+var _ = require('lodash/collection');
+
 const TurnStatus = {
     WRITING: 1,
     VOTING: 2,
@@ -29,6 +31,8 @@ function Turn(io, roomId) {
     this.turnsHaveStarted = false;
     this.isPaused = false;
     this._allUsersFinished = false;
+    this._story = '';
+    this._roundWinners = []; 
 
     this._timerBroadcaster = new timerBroadcaster(this._roomId);
     //for when all users leave a room 
@@ -39,10 +43,31 @@ function Turn(io, roomId) {
         //TODO: add logic to clear rounds here
     }
 
-    this.startTurns = function() {
+    this.startTurns = async function() {
         this.turnsHaveStarted = true;
-        this.currentRound = new round.Round(this._round);
-        this._doARound();
+        for(let i = 0; i < 10; i++) {
+            this.currentRound = new round.Round(this._round);
+            const roundResults = await this._doARound();
+    
+            this._story += (' ' + roundResults.winner.message);
+            this._roundWinners.push(roundResults.winner.user);
+            console.log(
+                {   
+                    story:this._story, 
+                    score: _.countBy(this._roundWinners)
+                }
+            )
+            broadcastToRoomId(
+                this._roomId, 
+                'results', 
+                {   
+                    story:this._story, 
+                    score: _.countBy(this._roundWinners)
+                }
+            );
+            await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
+        }
+
     }
     
     this.pauseTurns = function() {
@@ -93,22 +118,27 @@ function Turn(io, roomId) {
         return clientsInRoom == this.currentRound.writings.length;
     }
 
-    this._doARound = async function() {
-        this._turnStatus = TurnStatus.WRITING;
-        await this._timerBroadcaster.start(TurnStatus.WRITING, SECONDS_TO_WRITE);
+    this._doARound = () => {
+        return new Promise(async (resolve, reject) => {
+            this._turnStatus = TurnStatus.WRITING;
+            await this._timerBroadcaster.start(TurnStatus.WRITING, SECONDS_TO_WRITE);
 
-        this._turnStatus = TurnStatus.VOTING;
-        this._broadcastVoteStart();
-        await this._timerBroadcaster.start(TurnStatus.VOTING, SECONDS_TO_VOTE);
+            this._turnStatus = TurnStatus.VOTING;
+            this._broadcastVoteStart();
+            await this._timerBroadcaster.start(TurnStatus.VOTING, SECONDS_TO_VOTE);
 
-        this._turnStatus = TurnStatus.DISPLAYING_INFO;
-        broadcastToRoomId(
-            this._roomId, 
-            'roundOver', 
-            this.currentRound.getRoundResultsWithWinner()
-        );
-
-        await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
+            this._turnStatus = TurnStatus.DISPLAYING_INFO;
+            const winResults = this.currentRound.getRoundResultsWithWinner();
+            broadcastToRoomId(
+                this._roomId, 
+                'roundOver', 
+                winResults
+            );
+            resolve(winResults);
+        //return winResults;
+        })
+       
+        //need story + scores 
     }
 
     //can't broadcast a writing to the same user that wrote it 

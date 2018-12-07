@@ -1,9 +1,10 @@
-Make tests and refactor
-- see todos for refactoring
-- game shows winner after all the votes 
-- game can handle looping turns  
+As a user, I want the game to end with a winner 
 
-- test:
-    game gets votes 
-    game get writings 
-    game calculate winner 
+As a user, I want some random text for my writing if I don't submit in time 
+
+As a user, I want the room to keep track of the winner 
+
+As a user, I don't want the game to restart when a new person joins 
+    - new person can't participate until the current round is over 
+
+Make a bot that can play the game

@@ -16,11 +16,13 @@
     </style>
   </head>
   <body>
-    <h1 id="gameStatus">Waiting to connect</h1>
+    <h1 id="name"></h1>
+    <h2 id="gameStatus">Waiting to connect</h2>
     <div style="display:none" id ="writing">
         <textarea class="send"></textarea>
         <button id="submit-msg" class="send">send</button>
     </div>
+    
     <div style="display:none" id="voting">
         <table>
             <tr>
@@ -37,6 +39,14 @@
                 <th>Votes</th>
             </tr>
         </table>        
+    </div>
+    <div>
+        <h2 style="margin-top: 20px">THE STORY...</h2>
+        <div id="story"></div>
+    </div>
+    <h2 style="margin-top: 20px">Round Winners</h2>
+    <div id="round-winners">
+
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script> 

@@ -13,7 +13,6 @@ function TimerBroadcaster(roomId) {
             this._countdown = durationSeconds;
             this._turnTimer = setInterval(() => { 
                 if (this._countdown <= 0) {
-                    console.log(this._turnTimer)
                     clearInterval(this._turnTimer);
                     resolve();
                 }

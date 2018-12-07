@@ -1,7 +1,7 @@
  //client socket -- connects to the host that calls the page by default
 $(function () {
     var socket = io('http://localhost:3000');
-
+    
     socket.on('roundOver', function(stats){
         showHideWriter(3)
         clearStats();
@@ -15,8 +15,24 @@ $(function () {
     })
 
     socket.on('waiting', function(msg) {
+        $('#name').text(socket.id);
         $('#gameStatus').text(msg);
         showHideWriter(3);
+    });
+
+    socket.on('results', function(msg) {
+        debugger;
+        $('#story').text(msg.story);
+        let html = '';
+        for (var property in msg.score) {
+            html+='<p>';
+            html+=String(property);
+            html+= ' : ';
+            html+=String(msg.score[property]);
+            html+='</p>'
+        }
+        
+        $('#round-winners').html(html);
     });
 
     socket.on('turnTimer', function(msg){
