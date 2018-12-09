@@ -13,7 +13,7 @@ function kickAllClients(amount) {
     Object.values(testGame.lobby._io.of("/").connected).forEach(function(s) {
         s.disconnect();
         if (amount) {
-            console.log(amount)
+            //console.log(amount)
             amount--;
         }
         if (amount <= 0) {

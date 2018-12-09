@@ -8,9 +8,8 @@ $(function () {
         showStats();
         
         stats.results.forEach(function(aStat){
-            //console.log(aStat.user, stats.winner.user);
-            const isWinner = aStat.user == stats.winner.user;
-            addStat( isWinner ? "<b>WINNER " + aStat.user + "</b>": aStat.user, aStat.message, aStat.votes ? aStat.votes : 0);
+            const isWinner = aStat.user.socketId == stats.winner.user.socketId;
+            addStat( isWinner ? "<b>WINNER " + aStat.user.name + "</b>": aStat.user.name, aStat.message, aStat.votes ? aStat.votes : 0);
         })
     })
 
@@ -21,16 +20,16 @@ $(function () {
     });
 
     socket.on('results', function(msg) {
-        debugger;
         $('#story').text(msg.story);
         let html = '';
-        for (var property in msg.score) {
+
+        msg.score.forEach((aScore) => {
             html+='<p>';
-            html+=String(property);
+            html+=String(aScore.name);
             html+= ' : ';
-            html+=String(msg.score[property]);
-            html+='</p>'
-        }
+            html+=String(aScore.score);
+            html+='</p>' 
+        })
         
         $('#round-winners').html(html);
     });
@@ -45,12 +44,18 @@ $(function () {
     }); 
 
     socket.on('vote', function(votes){
-        console.log(votes)
         clearVotes();
         votes.forEach(aVote => {
             addVoteForUser(aVote.user, aVote.message) 
         });
     })
+
+    $('#submit-name').click(function(){   
+        socket.emit(  
+            'name',
+            $('#user_name').val()   
+        );
+    });
 
     $('#submit-msg').click(function(){   
         socket.emit(  
@@ -60,7 +65,6 @@ $(function () {
     });
     
     $('#voting').on('click', 'button', function(e) {
-        console.log(this.value);
         socket.emit(
             'vote',
             this.value

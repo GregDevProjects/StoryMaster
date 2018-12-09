@@ -48,26 +48,58 @@ function Turn(io, roomId) {
         for(let i = 0; i < 10; i++) {
             this.currentRound = new round.Round(this._round);
             const roundResults = await this._doARound();
-    
+            //FAILS HERE IF NO WRITINGS
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-            console.log(
-                {   
-                    story:this._story, 
-                    score: _.countBy(this._roundWinners)
-                }
-            )
+            //TODO: this is messy because _.countBy returns an object, need to find a better way to do this
+            a = _.countBy(this._roundWinners, function(o){
+                return o.socketId
+            })
+
+
+            let winArray = [];
+
+            for (var key in a) {
+                const name = this._roundWinners.find(function(yo){
+                    return yo.socketId == key;
+                }).name
+                const score = a[key];
+                winArray.push({name, score});
+            }
+
             broadcastToRoomId(
                 this._roomId, 
                 'results', 
-                {   
+                {    
                     story:this._story, 
-                    score: _.countBy(this._roundWinners)
+                    score: winArray
                 }
             );
             await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
         }
 
+    }
+
+    this._doARound = () => {
+        return new Promise(async (resolve, reject) => {
+            this._turnStatus = TurnStatus.WRITING;
+            await this._timerBroadcaster.start(TurnStatus.WRITING, SECONDS_TO_WRITE);
+
+            this._turnStatus = TurnStatus.VOTING;
+            this._broadcastVoteStart();
+            await this._timerBroadcaster.start(TurnStatus.VOTING, SECONDS_TO_VOTE);
+
+            this._turnStatus = TurnStatus.DISPLAYING_INFO;
+            const winResults = this.currentRound.getRoundResultsWithWinner();
+            //console.log(winResults)
+            broadcastToRoomId(
+                this._roomId, 
+                'roundOver', 
+                winResults
+            );
+            resolve(winResults);
+        })     
+        //need story + scores 
     }
     
     this.pauseTurns = function() {
@@ -118,46 +150,25 @@ function Turn(io, roomId) {
         return clientsInRoom == this.currentRound.writings.length;
     }
 
-    this._doARound = () => {
-        return new Promise(async (resolve, reject) => {
-            this._turnStatus = TurnStatus.WRITING;
-            await this._timerBroadcaster.start(TurnStatus.WRITING, SECONDS_TO_WRITE);
 
-            this._turnStatus = TurnStatus.VOTING;
-            this._broadcastVoteStart();
-            await this._timerBroadcaster.start(TurnStatus.VOTING, SECONDS_TO_VOTE);
-
-            this._turnStatus = TurnStatus.DISPLAYING_INFO;
-            const winResults = this.currentRound.getRoundResultsWithWinner();
-            broadcastToRoomId(
-                this._roomId, 
-                'roundOver', 
-                winResults
-            );
-            resolve(winResults);
-        //return winResults;
-        })
-       
-        //need story + scores 
-    }
 
     //can't broadcast a writing to the same user that wrote it 
     //TODO: refactor, there's 3 loops in this function :(
     this._broadcastVoteStart = () => {
         const broadcasts = [];
         this.currentRound.writings.forEach(aWriting1 => {
-            const aBroadcast = {socketId: aWriting1.user, writings: []};
+            const aBroadcast = {socketId: aWriting1.user.socketId, writings: []};
             this.currentRound.writings.forEach(aWriting2 => {
-                if (aWriting1.user != aWriting2.user ) {
+                if (aWriting1.user.socketId != aWriting2.user.socketId ) {
                     aBroadcast.writings.push({
-                        user : aWriting2.user,
+                        user : aWriting2.user.socketId,
                         message : aWriting2.message
                     })
                 }
             });     
             broadcasts.push(aBroadcast)
         });
-
+        //(broadcasts);
         broadcasts.forEach((aBroadcast) => {
             broadcastToRoomId(aBroadcast.socketId, 'vote', aBroadcast.writings);
         });

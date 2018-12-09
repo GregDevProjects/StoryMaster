@@ -8,18 +8,19 @@ function Round(number) {
     this.number = number;
     this.writings = [];
     this.votes = [];
-    this.addWriting = (user, message) => {    
+    this.addWriting = (user, message) => {
         if (this._hasUserAlreadyWritten(user)) {
             return;
         }
-        this.writings.push({message: message, user: user})
+      
+        this.writings.push({message: message, user: user, userId : user.socketId});
     }
 
     this.addVote = (user, vote) => {
         if (this._hasUserAlreadyVoted(user)) {
             return;
         }
-        this.votes.push({user, vote})
+        this.votes.push({user : user, vote : vote, userId : user.socketId})
     }
 
     this.getRoundResultsWithWinner = () => {
@@ -31,24 +32,31 @@ function Round(number) {
     }
     //TODO: refactor
     this.getRoundResults = () => {
+       
         const score = this._getVoteResults();
+   
         let merged = this._getWritingsMergedWithVotes();
+       
         for (var prop in score) {
             merged.forEach(function(aMerge, index){
                 delete merged[index]["vote"];
-                if (aMerge['user'] != prop ) {
+                if (aMerge['userId'] != prop ) {
                     return;
                 }
                 merged[index]['votes'] = score[prop]
             }) 
         }
+
         return merged;
     }
 
     this._getWritingsMergedWithVotes = () => {
+      
+        
+        
         return _(this.writings)
             .concat(this.votes)
-            .groupBy("user")
+            .groupBy("userId")
             .map(_.spread(_.merge))
             .value();
     }
@@ -59,12 +67,12 @@ function Round(number) {
 
     this._hasUserAlreadyVoted = (user) => {
         return this.votes.find(function(aVote){
-            return aVote.user == user
+            return aVote.user.socketId == user.socketId;
         });
     }
     this._hasUserAlreadyWritten = (user) => {
         return this.writings.find(function(aWriting){
-            return aWriting.user == user;
+            return aWriting.user.socketId == user.socketId;
         });
     }
 }

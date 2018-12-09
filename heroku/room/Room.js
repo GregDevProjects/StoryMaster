@@ -1,6 +1,8 @@
 var uniqid = require('uniqid');
 var turn = require('./turn/Turn')
 var broadcastToRoomId = require('../io/index').broadcastToRoomId;
+var user = require('./User').User;
+var _ = require('lodash');
 
 const MAX_USERS_IN_ROOM = 5;
 const MIN_USERS_IN_ROOM = 3;
@@ -21,6 +23,7 @@ function Room(io) {
     this.id = uniqid();
     this._io = io;
     this._turns = new turn.Turn(this._io, this.id);
+    this._users = [];
 
     this._getClientCount = function () {
        return new Promise((resolve, reject) => {
@@ -32,15 +35,39 @@ function Room(io) {
             });       
         }) 
     }
-    this.join = async function (socket) {
+    this.join = async function (socket, userName) {
         socket.join(this.id);
+        this._addUserIfNew(socket, userName);
+        //console.log(this._users.length);
         socket.on('msg', async (data) => {
-            this._turns.onWritingReceived(socket.id, data, await this._getClientCount());
+            const userThatWrote = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
+            if (!userThatWrote) {
+                return;
+            }
+            this._turns.onWritingReceived(
+                userThatWrote, 
+                data, 
+                await this._getClientCount()
+            );
         });
         socket.on('vote', async (data) => {
-            this._turns.onVoteReceived(socket.id, data, await this._getClientCount());
+            const userThatVoted = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
+            if (!userThatVoted) {
+                return;
+            }
+            this._turns.onVoteReceived(
+                userThatVoted, 
+                data, 
+                await this._getClientCount()
+            );
         });
         this._broadcastWaitingStatusOrStartTurns(socket.id);
+    }
+    this._addUserIfNew = (socket, userName) => {
+        const userIsAlreadyInRoom = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
+        if (!userIsAlreadyInRoom) {
+            this._users.push(new user(socket.id, userName));
+        }
     }
     this._broadcastWaitingStatusOrStartTurns = async function(newUserId) {
         if (await this._isEnoughUsersToStart()) {
@@ -64,7 +91,8 @@ function Room(io) {
         }
         this._turns.resumeTurns();
     }
-    this.onUserDisconnect = async() => {
+    this.onUserDisconnect = async(socket) => {
+        this.removeUser(socket.id);
         const usersInRoom = await this._getClientCount();
         if (usersInRoom >= MIN_USERS_IN_ROOM) {
             return;
@@ -77,6 +105,12 @@ function Room(io) {
         this._turns.pauseTurns();
 
     }
+    this.removeUser = (socketId) => {
+        _.remove(this._users, function(aUser) {
+            return aUser.socketId == socketId;
+        });
+    }
+
     this.canAnotherUserJoin = async () => {
         return await this._getClientCount() < MAX_USERS_IN_ROOM;
     }

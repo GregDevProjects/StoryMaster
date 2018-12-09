@@ -1,10 +1,23 @@
+As a user, I want the game to continue if I don't vote/write before the time limit ends 
+    - after timer ends, vote for a random user or submit cute message
+
+All tests are failing right now because user must enter a name ot join a room :( 
+
 As a user, I want the game to end with a winner 
 
 As a user, I want some random text for my writing if I don't submit in time 
 
-As a user, I want the room to keep track of the winner 
+As a user, I don't want to see the scores of people that leave 
+
+As a user, I want the room to keep track of the game winner 
 
 As a user, I don't want the game to restart when a new person joins 
     - new person can't participate until the current round is over 
 
+
+
 Make a bot that can play the game
+
+Security stuff 
+    - only accept requests from approved sites 
+    - can't play if on the same ip 
