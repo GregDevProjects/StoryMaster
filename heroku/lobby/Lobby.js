@@ -20,16 +20,16 @@ function Lobby(io) {
         this._io.on('connection', async (socket) => {
             
             broadcastToRoomId(socket.id, 'waiting', 'connected');
-            const room = await this._getRoomForClient();
+            let room = false;
             socket.on('name', async (userName) => { 
-               
-                room.join(socket, userName);
-                
+                room = await this._getRoomForClient();
+                room.join(socket, userName);  
             });  
-
             
             socket.on('disconnecting', async () => { 
-                
+                if (!room) {
+                    return;
+                }
                 const roomWasDeleted = await this._deleteRoomIfNoClients(socket);
                 if (!roomWasDeleted) {
                     room.onUserDisconnect(socket);

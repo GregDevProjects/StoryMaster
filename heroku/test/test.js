@@ -57,7 +57,15 @@ describe('Lobby managing rooms', function() {
         const clients = getRandomInt(5,15);
         const MAX_USERS_IN_ROOM =  room.MAX_USERS_IN_ROOM;
         for (let i = 0; i < clients; i++) {
-            client('http://localhost:3000/');
+            let c = client('http://localhost:3000/').on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
+
+            });
         }
 
         setTimeout(function() {
@@ -90,7 +98,16 @@ describe('Room managing clients', function() {
     it('counts the clients in the room', function(done) {
         const clients = getRandomInt(1,3);
         for (let i = 0; i < clients; i++) {
-            client('http://localhost:3000/');
+            const c = client('http://localhost:3000/');
+            c.on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
+        
+            });
         }
 
         setTimeout(async () => {
@@ -103,11 +120,22 @@ describe('Room managing clients', function() {
         let broadcastedClients = 0;
         const requiredUsersToStart = room.MIN_USERS_IN_ROOM;
         for (let i = 0; i < requiredUsersToStart; i++) {
-            client('http://localhost:3000/').on('waiting', (msg) => {
+            const c = client('http://localhost:3000/').on('waiting', (msg) => {
                 if (msg === room.GAME_START_MESSAGE) {
                     broadcastedClients++;
                 }
             });
+
+            c.on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
+        
+            });
+
         }
         setTimeout(() => {
             assert.equal(broadcastedClients, requiredUsersToStart);
@@ -119,10 +147,20 @@ describe('Room managing clients', function() {
         let broadcastedClients = 0;
         const oneLessThanRequiredUsersToStart = room.MIN_USERS_IN_ROOM - 1; 
         for (let i = 0; i < oneLessThanRequiredUsersToStart; i++) {
-            client('http://localhost:3000/').on('waiting', (msg) => {
+            const c = client('http://localhost:3000/').on('waiting', (msg) => {
                 if (msg === room.GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE) {
                     broadcastedClients++;
                 }
+            });
+
+            c.on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
+        
             });
         }
         setTimeout(() => {
@@ -135,20 +173,38 @@ describe('Room managing clients', function() {
         let broadcastedClients = 0;
         const clientThatLeaves = client('http://localhost:3000/');
 
+        clientThatLeaves.on('waiting', (msg) => {
+            if(msg == 'connected') {
+                clientThatLeaves.emit( 
+                    'name',
+                    'i'   
+                );
+            }
+    
+        });
+
         for (let i = 0; i < room.MIN_USERS_IN_ROOM - 1; i++) {
-            client('http://localhost:3000/').on('waiting', (msg) => {
+            const c = client('http://localhost:3000/').on('waiting', (msg) => {
                 if (msg === room.GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE) { 
                     broadcastedClients++;
                 }
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
             });
+
+
         }
         setTimeout(() => {
             clientThatLeaves.disconnect();
-        }, 100)
+        }, 200)
         setTimeout(() => {
             assert.equal(broadcastedClients, room.MIN_USERS_IN_ROOM -1);
             done();
-        }, 200)
+        }, 300)
     });
 });
 
@@ -186,6 +242,15 @@ describe('Turn broadcasting to clients', function() {
             c.on('vote', function(votes){
                 broadcastedClients++;
             });
+            c.on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
+        
+            });
         }
         setTimeout(() => {
             assert.equal(
@@ -201,6 +266,12 @@ describe('Turn broadcasting to clients', function() {
 
         for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
             let c = client('http://localhost:3000/').on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
                 if (msg === room.GAME_START_MESSAGE) {
                     c.emit(  
                         'msg',
