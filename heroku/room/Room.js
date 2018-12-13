@@ -36,8 +36,9 @@ function Room(io) {
         }) 
     }
     this.join = async function (socket, userName) {
-        socket.join(this.id);
+        
         this._addUserIfNew(socket, userName);
+        
         //console.log(this._users.length);
         socket.on('msg', async (data) => {
             const userThatWrote = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
@@ -61,12 +62,14 @@ function Room(io) {
                 await this._getClientCount()
             );
         });
-        this._broadcastWaitingStatusOrStartTurns(socket.id);
+        
     }
     this._addUserIfNew = (socket, userName) => {
         const userIsAlreadyInRoom = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
         if (!userIsAlreadyInRoom) {
+            socket.join(this.id);
             this._users.push(new user(socket.id, userName));
+            this._broadcastWaitingStatusOrStartTurns(socket.id);
         }
     }
     this._broadcastWaitingStatusOrStartTurns = async function(newUserId) {

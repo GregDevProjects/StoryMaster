@@ -43,6 +43,24 @@ function Turn(io, roomId) {
         //TODO: add logic to clear rounds here
     }
 
+    this.getRoundWinners = function() {
+        //TODO: this is messy because _.countBy returns an object, need to find a better way to do this
+        a = _.countBy(this._roundWinners, function(o){
+            return o.socketId
+        })
+
+        let winArray = [];
+
+        for (var key in a) {
+            const name = this._roundWinners.find(function(yo){
+                return yo.socketId == key;
+            }).name
+            const score = a[key];
+            winArray.push({name, score});
+        }
+        return winArray;
+    }
+
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
         for(let i = 0; i < 10; i++) {
@@ -51,28 +69,14 @@ function Turn(io, roomId) {
             //FAILS HERE IF NO WRITINGS
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-            //TODO: this is messy because _.countBy returns an object, need to find a better way to do this
-            a = _.countBy(this._roundWinners, function(o){
-                return o.socketId
-            })
 
-
-            let winArray = [];
-
-            for (var key in a) {
-                const name = this._roundWinners.find(function(yo){
-                    return yo.socketId == key;
-                }).name
-                const score = a[key];
-                winArray.push({name, score});
-            }
 
             broadcastToRoomId(
                 this._roomId, 
                 'results', 
                 {    
                     story:this._story, 
-                    score: winArray
+                    score: this.getRoundWinners()
                 }
             );
             await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
