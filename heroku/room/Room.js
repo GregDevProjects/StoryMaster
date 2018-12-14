@@ -22,8 +22,8 @@ module.exports = {
 function Room(io) {
     this.id = uniqid();
     this._io = io;
-    this._turns = new turn.Turn(this._io, this.id);
     this._users = [];
+    this._turns = new turn.Turn(this._io, this.id, this._users);
 
     this._getClientCount = function () {
        return new Promise((resolve, reject) => {
@@ -39,7 +39,6 @@ function Room(io) {
         
         this._addUserIfNew(socket, userName);
         
-        //console.log(this._users.length);
         socket.on('msg', async (data) => {
             const userThatWrote = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
             if (!userThatWrote) {

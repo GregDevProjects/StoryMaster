@@ -1,6 +1,9 @@
 As a user, I want the game to continue if I don't vote/write before the time limit ends 
-    - if room users < writings/votes && that user is not in a "waiting to start" state
     - after timer ends, vote for a random user or submit cute message
+
+As a user, I don't want the game to restart when a new person joins 
+    - new person can't participate until the current round is over
+    - if room users < writings/votes && that user is not in a "waiting to start" state
 
 As a user, I want the game to end with a winner 
 
@@ -8,11 +11,7 @@ As a user, I don't want to see the scores of people that leave
 
 As a user, I want the room to keep track of the game winner 
 
-As a user, I don't want the game to restart when a new person joins 
-    - new person can't participate until the current round is over 
-
 Determine conditions for when current story in room gets wiped
-
 
 Make a bot that can play the game
 

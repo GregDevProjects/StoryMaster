@@ -22,15 +22,13 @@ module.exports = {
     Turn : Turn
 }
 
-function Turn(io, roomId) { 
+//TODO: remove io? is this._roomId needed?
+function Turn(io, roomId, usersInRoom) {
     this._io = io;
     this._turnStatus;
     this._roomId = roomId;
-    this._round = 1;
-    this._rounds = [];
     this.turnsHaveStarted = false;
     this.isPaused = false;
-    this._allUsersFinished = false;
     this._story = '';
     this._roundWinners = []; 
 
@@ -45,7 +43,7 @@ function Turn(io, roomId) {
 
     this.getRoundWinners = function() {
         //TODO: this is messy because _.countBy returns an object, need to find a better way to do this
-        a = _.countBy(this._roundWinners, function(o){
+        const a = _.countBy(this._roundWinners, function(o){
             return o.socketId
         })
 
@@ -64,7 +62,7 @@ function Turn(io, roomId) {
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
         for(let i = 0; i < 10; i++) {
-            this.currentRound = new round.Round(this._round);
+            this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             //FAILS HERE IF NO WRITINGS
             this._story += (' ' + roundResults.winner.message);
@@ -84,11 +82,39 @@ function Turn(io, roomId) {
 
     }
 
+    this.addWritingsForUsersThatDidNotWrite = (inputs) => {
+        console.log(inputs);
+        this.getUsersThatDidNotProvideInput(inputs).forEach((aUser) => {
+            this.currentRound.addWriting(
+                aUser,
+                aUser.name + ' was too slow to submit a writing in time, so this is their entry :('
+            )
+        })
+
+        
+    }
+
+    this.getUsersThatDidNotProvideInput = (inputs) => {
+        const usersThatDidNotProvideInput = [];
+        usersInRoom.forEach((aUserInRoom) => {
+            const matchingUser = inputs.find((aWriting) => {
+                return aWriting.userId == aUserInRoom.socketId
+            });
+            if (!matchingUser) {
+                usersThatDidNotProvideInput.push(aUserInRoom);
+            }
+        });
+        console.log(usersThatDidNotProvideInput);
+        return usersThatDidNotProvideInput;
+    }
+
+   // this.fillNoSum
+
     this._doARound = () => {
         return new Promise(async (resolve, reject) => {
             this._turnStatus = TurnStatus.WRITING;
             await this._timerBroadcaster.start(TurnStatus.WRITING, SECONDS_TO_WRITE);
-
+            this.addWritingsForUsersThatDidNotWrite(this.currentRound.writings);
             this._turnStatus = TurnStatus.VOTING;
             this._broadcastVoteStart();
             await this._timerBroadcaster.start(TurnStatus.VOTING, SECONDS_TO_VOTE);
