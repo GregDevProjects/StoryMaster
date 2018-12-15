@@ -5,7 +5,7 @@
 var round = require('./Round');
 var broadcastToRoomId = require('../../io/index').broadcastToRoomId;
 var timerBroadcaster = require('./CountdownTimer').TimerBroadcaster;
-var _ = require('lodash/collection');
+var _ = require('lodash');
 
 const TurnStatus = {
     WRITING: 1,
@@ -23,8 +23,7 @@ module.exports = {
 }
 
 //TODO: remove io? is this._roomId needed?
-function Turn(io, roomId, usersInRoom) {
-    this._io = io;
+function Turn(roomId, usersInRoom) {
     this._turnStatus;
     this._roomId = roomId;
     this.turnsHaveStarted = false;
@@ -83,7 +82,6 @@ function Turn(io, roomId, usersInRoom) {
     }
 
     this.addWritingsForUsersThatDidNotWrite = (inputs) => {
-        console.log(inputs);
         this.getUsersThatDidNotProvideInput(inputs).forEach((aUser) => {
             this.currentRound.addWriting(
                 aUser,
@@ -92,6 +90,20 @@ function Turn(io, roomId, usersInRoom) {
         })
 
         
+    }
+    //{user : user, vote : vote, userId : user.socketId}
+    this.addVotesForUsersThatDidNotVote = (inputs) => {
+        this.getUsersThatDidNotProvideInput(inputs).forEach((aUser) => {
+            const allUsersBesidesThisOne = _.filter(usersInRoom, (o) => {
+                return o.socketId != aUser.socketId
+            });
+
+            const randomVote = this.getRandomInt(0,allUsersBesidesThisOne.length - 1);
+            this.currentRound.addVote( 
+                aUser,
+                allUsersBesidesThisOne[randomVote].socketId 
+            )
+        })        
     }
 
     this.getUsersThatDidNotProvideInput = (inputs) => {
@@ -104,11 +116,10 @@ function Turn(io, roomId, usersInRoom) {
                 usersThatDidNotProvideInput.push(aUserInRoom);
             }
         });
-        console.log(usersThatDidNotProvideInput);
         return usersThatDidNotProvideInput;
     }
 
-   // this.fillNoSum
+
 
     this._doARound = () => {
         return new Promise(async (resolve, reject) => {
@@ -118,10 +129,10 @@ function Turn(io, roomId, usersInRoom) {
             this._turnStatus = TurnStatus.VOTING;
             this._broadcastVoteStart();
             await this._timerBroadcaster.start(TurnStatus.VOTING, SECONDS_TO_VOTE);
+            this.addVotesForUsersThatDidNotVote(this.currentRound.votes);
 
             this._turnStatus = TurnStatus.DISPLAYING_INFO;
             const winResults = this.currentRound.getRoundResultsWithWinner();
-            //console.log(winResults)
             broadcastToRoomId(
                 this._roomId, 
                 'roundOver', 
@@ -202,6 +213,11 @@ function Turn(io, roomId, usersInRoom) {
         broadcasts.forEach((aBroadcast) => {
             broadcastToRoomId(aBroadcast.socketId, 'vote', aBroadcast.writings);
         });
+    }
+
+    this.getRandomInt = (min, max) => {
+        max++
+        return Math.floor(Math.random() * max) + min;
     }
 
 }

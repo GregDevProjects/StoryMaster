@@ -23,7 +23,7 @@ function Room(io) {
     this.id = uniqid();
     this._io = io;
     this._users = [];
-    this._turns = new turn.Turn(this._io, this.id, this._users);
+    this._turns = new turn.Turn(this.id, this._users);
 
     this._getClientCount = function () {
        return new Promise((resolve, reject) => {
