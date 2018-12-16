@@ -5,4 +5,5 @@ module.exports = {
 function User(socketId, name) {
     this.socketId = socketId;
     this.name = name;
+    this.isApprovedToPlayInTurns = false;
 }

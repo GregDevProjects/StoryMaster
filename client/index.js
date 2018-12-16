@@ -1,7 +1,8 @@
  //client socket -- connects to the host that calls the page by default
 $(function () {
     var socket = io('http://localhost:3000');
-    
+    isApproved = true;
+
     socket.on('roundOver', function(stats){
         showHideWriter(3)
         clearStats();
@@ -17,6 +18,18 @@ $(function () {
         $('#name').text(socket.id);
         $('#gameStatus').text(msg);
         showHideWriter(3);
+    });
+
+    socket.on('waitingRoundFinish', function(storySoFar) {
+        $('#gameStatus').text('Waiting for round to finish');
+        $('#story').text(storySoFar)
+        showHideWriter(4);
+        isApproved = false;
+    });
+
+    socket.on('roundStart', function() {
+        $('#gameStatus').text('New round started, about to play!');
+        isApproved = true;
     });
 
     socket.on('results', function(msg) {
@@ -35,6 +48,9 @@ $(function () {
     });
 
     socket.on('turnTimer', function(msg){
+        if (!isApproved) {
+            return;
+        }
         $('#gameStatus').text(
             msg.seconds + 
             ' left to ' +
@@ -44,6 +60,9 @@ $(function () {
     }); 
 
     socket.on('vote', function(votes){
+        if (!isApproved) {
+            return;
+        }
         clearVotes();
         votes.forEach(aVote => {
             addVoteForUser(aVote.user, aVote.message) 

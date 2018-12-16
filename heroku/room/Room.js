@@ -10,6 +10,8 @@ const GAME_START_MESSAGE = "connected to room, game starting";
 const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'Not enough players to start, waiting for another...';
 const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'Not enough players to continue, waiting for another...';
 
+
+
 module.exports = {
     Room: Room,
     MAX_USERS_IN_ROOM: MAX_USERS_IN_ROOM,
@@ -41,7 +43,7 @@ function Room(io) {
         
         socket.on('msg', async (data) => {
             const userThatWrote = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
-            if (!userThatWrote) {
+            if (!userThatWrote || !userThatWrote.isApprovedToPlayInTurns) {
                 return;
             }
             this._turns.onWritingReceived(
@@ -52,7 +54,7 @@ function Room(io) {
         });
         socket.on('vote', async (data) => {
             const userThatVoted = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
-            if (!userThatVoted) {
+            if (!userThatVoted || !userThatVoted.isApprovedToPlayInTurns) {
                 return;
             }
             this._turns.onVoteReceived(
@@ -67,31 +69,44 @@ function Room(io) {
         const userIsAlreadyInRoom = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
         if (!userIsAlreadyInRoom) {
             socket.join(this.id);
-            this._users.push(new user(socket.id, userName));
-            this._broadcastWaitingStatusOrStartTurns(socket.id);
+            const newUser = new user(socket.id, userName);
+            this._users.push(newUser);
+            this._broadcastWaitingStatusOrStartTurns(newUser);
         }
     }
-    this._broadcastWaitingStatusOrStartTurns = async function(newUserId) {
+    this._broadcastWaitingStatusOrStartTurns = async function(newUser) {
         if (await this._isEnoughUsersToStart()) {
-            this._startOrResumeTurns();
+            this._startOrResumeTurns(newUser);
             return;
         } 
-        this._broadcastWaitMessage(newUserId);
+        this._broadcastWaitMessage(newUser);
     }
-    this._broadcastWaitMessage = function(newUserId) {
+    this._broadcastWaitMessage = function(newUser) {
         const message = this._turns.isPaused ? 
             GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE : 
             GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE;
-        broadcastToRoomId(newUserId, 'waiting', message);
+        broadcastToRoomId(newUser.socketId, 'waiting', message);
     }
 
-    this._startOrResumeTurns = function() {
-        broadcastToRoomId(this.id, 'waiting', GAME_START_MESSAGE);
+    this._startOrResumeTurns = function(newUser) {
+        
         if (!this._turns.turnsHaveStarted) {
+            //game starts for the first time
+            broadcastToRoomId(this.id, 'waiting', GAME_START_MESSAGE);
+            this._users.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
             this._turns.startTurns();
             return;
         }
-        this._turns.resumeTurns();
+        if (this._users.length <= MIN_USERS_IN_ROOM) {
+            //the minimum users required to play was just met, restart round  
+            broadcastToRoomId(this.id, 'waiting', GAME_START_MESSAGE);
+            this._users.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
+            this._turns.resumeTurns();
+            return;
+        }
+        //round is already in progress, make new player wait until its over
+        broadcastToRoomId(newUser.socketId, 'waitingRoundFinish', this._turns._story);
+        newUser.isApprovedToPlayInTurns = false;
     }
     this.onUserDisconnect = async(socket) => {
         this.removeUser(socket.id);

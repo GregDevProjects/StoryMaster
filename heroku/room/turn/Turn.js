@@ -61,9 +61,10 @@ function Turn(roomId, usersInRoom) {
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
         for(let i = 0; i < 10; i++) {
+            usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
+            broadcastToRoomId(this._roomId, 'roundStart');
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
-            //FAILS HERE IF NO WRITINGS
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
 
@@ -109,6 +110,9 @@ function Turn(roomId, usersInRoom) {
     this.getUsersThatDidNotProvideInput = (inputs) => {
         const usersThatDidNotProvideInput = [];
         usersInRoom.forEach((aUserInRoom) => {
+            if (!aUserInRoom.isApprovedToPlayInTurns) {
+                return;
+            }
             const matchingUser = inputs.find((aWriting) => {
                 return aWriting.userId == aUserInRoom.socketId
             });
@@ -118,7 +122,6 @@ function Turn(roomId, usersInRoom) {
         });
         return usersThatDidNotProvideInput;
     }
-
 
 
     this._doARound = () => {
