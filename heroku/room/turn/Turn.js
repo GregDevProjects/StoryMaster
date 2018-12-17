@@ -22,21 +22,20 @@ module.exports = {
     Turn : Turn
 }
 
-//TODO: remove io? is this._roomId needed?
 function Turn(roomId, usersInRoom) {
     this._turnStatus;
-    this._roomId = roomId;
     this.turnsHaveStarted = false;
     this.isPaused = false;
     this._story = '';
     this._roundWinners = []; 
 
-    this._timerBroadcaster = new timerBroadcaster(this._roomId);
+    this._timerBroadcaster = new timerBroadcaster(roomId);
     //for when all users leave a room 
     //this will only be called by the only room left, otherwise the room will be destroyed when all users leave
     this.reset = function() {
         this.isPaused = false;
         this._timerBroadcaster.stopTimerWithoutResolving();
+        this._story = '';
         //TODO: add logic to clear rounds here
     }
 
@@ -62,7 +61,7 @@ function Turn(roomId, usersInRoom) {
         this.turnsHaveStarted = true;
         for(let i = 0; i < 10; i++) {
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
-            broadcastToRoomId(this._roomId, 'roundStart');
+            broadcastToRoomId(roomId, 'roundStart');
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
@@ -70,7 +69,7 @@ function Turn(roomId, usersInRoom) {
 
 
             broadcastToRoomId(
-                this._roomId, 
+                roomId, 
                 'results', 
                 {    
                     story:this._story, 
@@ -137,7 +136,7 @@ function Turn(roomId, usersInRoom) {
             this._turnStatus = TurnStatus.DISPLAYING_INFO;
             const winResults = this.currentRound.getRoundResultsWithWinner();
             broadcastToRoomId(
-                this._roomId, 
+                roomId, 
                 'roundOver', 
                 winResults
             );
@@ -149,7 +148,7 @@ function Turn(roomId, usersInRoom) {
     this.pauseTurns = function() {
         this._timerBroadcaster.stopTimerWithoutResolving();
         broadcastToRoomId(
-            this._roomId, 
+            roomId, 
             'waiting', 
             'Not enough players to continue, waiting for another...'
         );

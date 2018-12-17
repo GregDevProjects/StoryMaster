@@ -328,4 +328,59 @@ describe('Turn broadcasting to clients', function() {
         }, 100)
     });
   
+    it('broadcasts the correct round winner', function(done) {
+        let roundResults = "";
+        for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
+            let c = client('http://localhost:3000/').on('waiting', (msg) => {
+                if(msg == 'connected') {
+                    c.emit(  
+                        'name',
+                        i   
+                    );
+                }
+                if (msg === room.GAME_START_MESSAGE) {
+                    c.emit(  
+                        'msg',
+                        i
+                    )
+                }
+            });
+            c.on('vote', function(votes){
+                //console.log(votes);
+                let votedFor0 = false;
+                
+                votes.forEach(function(aVote){
+                    if (aVote.message == 0) {
+                        votedFor0 = true;
+                        c.emit(
+                            'vote',
+                            aVote.user
+                        )
+                    }
+                })
+
+                if (!votedFor0) {
+                    c.emit(
+                        'vote',
+                        votes[0].user
+                    )                
+                }
+            });
+
+            c.on('results', function(results){
+                //console.log(results)
+                roundResults = results;
+
+            });
+
+        }
+        setTimeout(() => {
+            assert.equal(
+                roundResults.story, 
+                0
+            );
+            done();
+        }, 200)
+    });
+
 });

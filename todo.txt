@@ -16,7 +16,6 @@ Security stuff
     - can't play if on the same ip 
 
 Tests
-    - counts votes correctly 
     - when timer runs out
         - placeholder writing 
         - random votes 
