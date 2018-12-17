@@ -3,6 +3,15 @@ $(function () {
     var socket = io('http://localhost:3000');
     isApproved = true;
 
+    socket.on('gameOver', function(results){
+        showHideWriter(4)
+        $('#game_results').show();
+        $('#final_scores').text(JSON.stringify(results.winner));
+        $('#final_story').text(results.story);
+        $('#story').text('');
+        $('#round-winners').html('');
+    })
+
     socket.on('roundOver', function(stats){
         showHideWriter(3)
         clearStats();
@@ -23,7 +32,7 @@ $(function () {
     socket.on('waitingRoundFinish', function(storySoFar) {
         $('#gameStatus').text('Waiting for round to finish');
         $('#story').text(storySoFar)
-        showHideWriter(4);
+        showHideWriter(1);
         isApproved = false;
     });
 
@@ -94,6 +103,7 @@ $(function () {
         $('#writing').hide();
         $('#voting').hide();
         $('#end-round-display').hide();
+        $('#game_results').hide();
         if (type == 1) {
             $('#writing').show();
             return;
@@ -102,9 +112,9 @@ $(function () {
             return;
         } else if (type == 3) {
             $('#end-round-display').show();
+        } else if (type == 4) {
+            $('#game_results').show();
         }
-
-
     }
 
     function clearVotes() {
@@ -159,6 +169,8 @@ $(function () {
             return 'vote';
         }  else if (type == 3) {
             return 'next round'
+        } else if (type == 4) {
+            return 'next game'
         }
         
     }

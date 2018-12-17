@@ -10,12 +10,15 @@ var _ = require('lodash');
 const TurnStatus = {
     WRITING: 1,
     VOTING: 2,
-    DISPLAYING_INFO: 3
+    DISPLAYING_INFO: 3,
+    GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 15;
-const SECONDS_TO_VOTE = 10;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 5;
+const SECONDS_TO_WRITE = 3;
+const SECONDS_TO_VOTE = 3;
+const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
+const SECONDS_TO_SHOW_GAME_OVER = 5;
+const ROUNDS_PER_GAME = 3
 
 module.exports = {
     TurnStatus : TurnStatus,
@@ -35,7 +38,7 @@ function Turn(roomId, usersInRoom) {
     this.reset = function() {
         this.isPaused = false;
         this._timerBroadcaster.stopTimerWithoutResolving();
-        this._story = '';
+        this.clearGame();
         //TODO: add logic to clear rounds here
     }
 
@@ -59,14 +62,13 @@ function Turn(roomId, usersInRoom) {
 
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
-        for(let i = 0; i < 10; i++) {
+        for(let i = 0; i < ROUNDS_PER_GAME; i++) {
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
             broadcastToRoomId(roomId, 'roundStart');
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-
 
             broadcastToRoomId(
                 roomId, 
@@ -79,6 +81,23 @@ function Turn(roomId, usersInRoom) {
             await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
         }
 
+        broadcastToRoomId(
+            roomId, 
+            'gameOver',
+            {
+                winner : this.getRoundWinners(),
+                story : this._story
+            }
+        );
+
+        await this._timerBroadcaster.start(TurnStatus.GAME_OVER, SECONDS_TO_SHOW_GAME_OVER);
+        this.clearGame();
+        this.startTurns();
+    }
+
+    this.clearGame = () => {
+        this._story = '';
+        this._roundWinners = [];       
     }
 
     this.addWritingsForUsersThatDidNotWrite = (inputs) => {
