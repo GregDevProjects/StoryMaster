@@ -1,10 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Paper from '@material-ui/core/Paper';
 import AppBar from './AppBar'
-import HelloWorld from './HelloWorld'
-import PeopleContainer from './PeopleContainer'
 import SplashScreen from './SplashScreen'
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 export default class App extends React.Component {
 
@@ -12,8 +10,6 @@ export default class App extends React.Component {
         super(props);
         this.state = {
             pages : {
-                'HelloWorld' : HelloWorld,
-                'PeopleContainer' : PeopleContainer,
                 'SplashScreen' : SplashScreen
             },
             page : SplashScreen
@@ -32,12 +28,13 @@ export default class App extends React.Component {
         const $SelectedPage =  this.state.page;
 
         return (
-            <div>
+            <React.Fragment>
+                <CssBaseline />
                 <AppBar go={this.setSelectedPage}/>
                  <div style={{position: 'relative', top:'50px'}}>
                     <$SelectedPage />
                  </div>
-            </div>
+            </React.Fragment>
         )
     }
 }
