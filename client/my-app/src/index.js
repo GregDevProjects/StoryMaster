@@ -1,39 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppBar from './AppBar'
 import SplashScreen from './SplashScreen'
 import CssBaseline from '@material-ui/core/CssBaseline';
+import NameScreen from './NameScreen';
+
+const PAGES = {
+    'SplashScreen' : SplashScreen,
+    'NameScreen' : NameScreen
+}
 
 export default class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            pages : {
-                'SplashScreen' : SplashScreen
-            },
-            page : SplashScreen
-        }
-
+        this.state = { currentPage: PAGES['NameScreen'] };
     }
 
-    setSelectedPage = function(newPage) {
-        // debugger;
-        this.setState ({
-            page : this.state.pages[newPage]
-        })
-    }.bind(this)
+    changePage(newPage) { 
+        if (!PAGES[newPage]) {
+            console.warn('newPage must be a key in PAGES');
+            return;
+        }
+        this.setState({currentPage : PAGES[newPage]});
+    }
 
     render() {
-        const $SelectedPage =  this.state.page;
+        const CurrentPage = this.state.currentPage;
 
         return (
             <React.Fragment>
                 <CssBaseline />
-                <AppBar go={this.setSelectedPage}/>
-                 <div style={{position: 'relative', top:'50px'}}>
-                    <$SelectedPage />
-                 </div>
+                <CurrentPage changePage={this.changePage.bind(this)} />
             </React.Fragment>
         )
     }

@@ -1,19 +1,20 @@
-As a user, I want the game to end with a winner 
-- game goes for a predetermined amount of rounds 
-- game doesn't restart if someone joins a game in progress 
-- game shows the current story to someone who joins a game in progress 
+Get the react app talking to server
 
-As a user, I don't want to see the scores of people that leave 
+As a user, I want to be able to learn how to play the game
+    -help button is on the bottom right of every page 
+    -opens modal on click?
 
-As a user, I want the room to keep track of the game winner 
+As a user, I want to be able to name myself 
+    - name is letters only, 1-40 characters 
 
-Determine conditions for when current story in room gets wiped
 
-Make a bot that can play the game
+Bugs 
+    - dash will display before quote is loaded on splashscreen
 
 Security stuff 
     - only accept requests from approved sites 
     - can't play if on the same ip 
+    - captcha
 
 Tests
     - when timer runs out
