@@ -13,7 +13,7 @@ export default class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { currentPage: PAGES['NameScreen'] };
+        this.state = { currentPage: PAGES['SplashScreen'] };
     }
 
     changePage(newPage) { 

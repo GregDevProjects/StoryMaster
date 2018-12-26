@@ -23,8 +23,11 @@ export default class SplashScreen extends React.Component {
             response.json().then((resolved) => {
                 const response = resolved[0];
                 this.setState({
-                    quote : response.content, 
-                    author : response.title
+                    quote : { 
+                        content : response.content,
+                        author : response.title 
+                    }
+                    
                 });
             });
             
@@ -34,8 +37,6 @@ export default class SplashScreen extends React.Component {
             }
         });
     }
-
-
 
     render() {
         return (
@@ -63,23 +64,7 @@ export default class SplashScreen extends React.Component {
                         style={{textAlign: 'center'}}
                         xs={12}
                     >
-                        { this.state.quote &&
-                            <div> 
-                                <div>  
-                                <Typography 
-                                    variant="body2"
-                                    dangerouslySetInnerHTML={{__html: this.state.quote}}>   
-                                </Typography>
-                                </div>
-                                <Typography
-                                    gutterBottom
-                                    variant="body2"
-                                    style={{fontStyle: "italic"}}
-                                >
-                                <i> -{this.state.author}</i>
-                                </Typography>
-                            </div>
-                        }
+                    <Quote quote={this.state.quote}/>
                     </Grid>
 
                     <Typography
@@ -102,6 +87,25 @@ export default class SplashScreen extends React.Component {
             </React.Fragment>
         )
     }
+}
 
-
+function Quote(props) {
+    if (!props.quote) {
+      return "";
+    }
+    return <div> 
+        <div>  
+        <Typography 
+            variant="body2"
+            dangerouslySetInnerHTML={{__html: props.quote.content}}>   
+        </Typography>
+        </div>
+        <Typography
+            gutterBottom
+            variant="body2"
+            style={{fontStyle: "italic"}}
+        >
+        <i> -{props.quote.author}</i>
+        </Typography>
+    </div>
 }
