@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 //https://material.io/design/components/progress-indicators.html#linear-progress-indicators
 import LinearProgress from '@material-ui/core/LinearProgress';
+import { connect, onConnection } from './socketIoEvents'
 
 export default class NameScreen extends React.Component {
 
@@ -16,12 +17,12 @@ export default class NameScreen extends React.Component {
             isLoading: true,
             error: true
           };
-
-        setTimeout(() => {
+        connect();
+        onConnection(() => {
             this.setState({
                 isLoading: false
             })
-        }, 3000);
+        });
     }
     //TODO: find a validation library that can handle this
     onChange(event) {
