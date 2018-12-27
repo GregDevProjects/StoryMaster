@@ -14,11 +14,13 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 3;
-const SECONDS_TO_VOTE = 3;
+const SECONDS_TO_WRITE = 15;
+const SECONDS_TO_VOTE = 15;
 const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
 const SECONDS_TO_SHOW_GAME_OVER = 5;
 const ROUNDS_PER_GAME = 3
+const WRITING_START_MESSAGE = 'writing';
+const VOTING_START_MESSAGE = 'vote';
 
 module.exports = {
     TurnStatus : TurnStatus,
@@ -65,6 +67,7 @@ function Turn(roomId, usersInRoom) {
         for(let i = 0; i < ROUNDS_PER_GAME; i++) {
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
             broadcastToRoomId(roomId, 'roundStart');
+            console.log('round started')
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
@@ -141,10 +144,14 @@ function Turn(roomId, usersInRoom) {
         return usersThatDidNotProvideInput;
     }
 
+    this._broadcastWritingStart = () => {
+        broadcastToRoomId(roomId, WRITING_START_MESSAGE);
+    }
 
     this._doARound = () => {
         return new Promise(async (resolve, reject) => {
             this._turnStatus = TurnStatus.WRITING;
+            this._broadcastWritingStart();
             await this._timerBroadcaster.start(TurnStatus.WRITING, SECONDS_TO_WRITE);
             this.addWritingsForUsersThatDidNotWrite(this.currentRound.writings);
             this._turnStatus = TurnStatus.VOTING;
@@ -226,7 +233,7 @@ function Turn(roomId, usersInRoom) {
         });
         //(broadcasts);
         broadcasts.forEach((aBroadcast) => {
-            broadcastToRoomId(aBroadcast.socketId, 'vote', aBroadcast.writings);
+            broadcastToRoomId(aBroadcast.socketId, VOTING_START_MESSAGE, aBroadcast.writings);
         });
     }
 

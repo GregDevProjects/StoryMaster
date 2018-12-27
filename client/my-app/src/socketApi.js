@@ -6,6 +6,17 @@ const host = 'http://localhost:4000';
 const GAME_START_MESSAGE = "GS";
 const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'WTS';
 const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'WTC';
+const WRITING_TIMER_STATUS = 1;
+const WRITING_START_MESSAGE = 'writing';
+const VOTING_START_MESSAGE = 'vote';
+
+export function onWritingStart(callBack) {
+    socket.on('writing', function() {
+        console.log('called')
+        callBack();
+    });
+}
+
 
 export function waiting() {
     socket.on('waiting', function(msg) {

@@ -5,7 +5,7 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 //https://material.io/design/components/progress-indicators.html#linear-progress-indicators
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { onWaitingForPlayersToBeginGame, onGameStart, onWaitingForPlayersToContinueGame } from './socketApi'
+import { onWaitingForPlayersToBeginGame, onGameStart, onWaitingForPlayersToContinueGame, onWritingStart } from './socketApi'
 
 const LOOKING_FOR_GAME = "looking for a game";
 const WAITING_FOR_GAME_START = "game found, the story will begin when enough players join";
@@ -35,7 +35,9 @@ export default class FindingGameScreen extends React.Component {
                 loadingMessage : WAITING_FOR_GAME_CONTINUE
             })
         });
-        //TODO: find best event to go to writing screen
+        onWritingStart(() => {
+            this.props.changeScreen('WritingScreen'); 
+        })
     }
 
     render() {
@@ -59,7 +61,7 @@ export default class FindingGameScreen extends React.Component {
                                 textAlign: "center"
                             }}
                         >
-                        {this.state.loadingMessage}
+                            {this.state.loadingMessage}
                         </Typography>
                     </Grid>
                     <LinearProgress />

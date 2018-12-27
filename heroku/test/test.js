@@ -195,8 +195,6 @@ describe('Room managing clients', function() {
                     );
                 }
             });
-
-
         }
         setTimeout(() => {
             clientThatLeaves.disconnect();

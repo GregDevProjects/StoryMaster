@@ -4,18 +4,20 @@ import SplashScreen from './SplashScreen'
 import CssBaseline from '@material-ui/core/CssBaseline';
 import NameScreen from './NameScreen';
 import FindingGameScreen from './FindingGameScreen';
+import WritingScreen from './WritingScreen';
 
 const PAGES = {
     'SplashScreen' : SplashScreen,
     'NameScreen' : NameScreen,
-    'FindingGameScreen' : FindingGameScreen
+    'FindingGameScreen' : FindingGameScreen,
+    'WritingScreen' : WritingScreen
 }
 
 export default class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { currentPage: PAGES['NameScreen'] };
+        this.state = { currentPage: PAGES['WritingScreen'] };
     }
 
     changeScreen(newPage) { 
