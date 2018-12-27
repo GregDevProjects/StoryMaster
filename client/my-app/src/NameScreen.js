@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 //https://material.io/design/components/progress-indicators.html#linear-progress-indicators
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { connect, onConnection } from './socketIoEvents'
+import { connect, onConnection, submitName } from './socketApi'
 
 export default class NameScreen extends React.Component {
 
@@ -15,7 +15,7 @@ export default class NameScreen extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
-            error: true
+            inputValidationError: true
           };
         connect();
         onConnection(() => {
@@ -26,18 +26,23 @@ export default class NameScreen extends React.Component {
     }
     //TODO: find a validation library that can handle this
     onChange(event) {
-        this.setState({ error: true })
+        this.setState({ inputValidationError: true })
         var letters = /^[a-zA-Z]{1,30}$/;
         if (event.target.value.match(letters)) {
-           this.setState({ error: false })
+           this.setState(
+                { 
+                    inputValidationError: false,
+                    name: event.target.value
+                }
+            )
            return;
         } 
-        this.setState({ error: true })     
+        this.setState({ inputValidationError: true })     
     }
 
     render() {
         const  isLoading  = this.state.isLoading;
-        const  error  = this.state.error;
+        const  inputValidationError  = this.state.inputValidationError;
         return (
             <React.Fragment>
                 <Fade in={isLoading}>
@@ -72,7 +77,7 @@ export default class NameScreen extends React.Component {
                         >
                         <TextField
                             required
-                            error={error}
+                            error={inputValidationError}
                             id="outlined-required"
                             label="Name"
                             margin="normal"
@@ -93,9 +98,10 @@ export default class NameScreen extends React.Component {
                             color="primary"
                             style={{marginTop: 24, marginBottom: 10}}
                             onClick={()=>{
-                                this.props.changePage('NameScreen');
+                                submitName(this.state.name);
+                                this.props.changeScreen('FindingGameScreen');
                             }}
-                            disabled={error}
+                            disabled={inputValidationError}
                         >
                             FIND GAME
                         </Button>

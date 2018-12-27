@@ -12,6 +12,7 @@ export default class SplashScreen extends React.Component {
         super(props);
         this.state = {quote : null}
         this.displayRandomQuote();
+        
     }
 
     displayRandomQuote() {
@@ -75,7 +76,7 @@ export default class SplashScreen extends React.Component {
                         color="primary"
                         style={{marginTop: 10, marginBottom: 10}}
                         onClick={()=>{
-                            this.props.changePage('NameScreen');
+                            this.props.changeScreen('NameScreen');
                         }}
                     >
                         START

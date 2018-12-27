@@ -6,9 +6,9 @@ var _ = require('lodash');
 
 const MAX_USERS_IN_ROOM = 5;
 const MIN_USERS_IN_ROOM = 3;
-const GAME_START_MESSAGE = "connected to room, game starting";
-const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'Not enough players to start, waiting for another...';
-const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'Not enough players to continue, waiting for another...';
+const GAME_START_MESSAGE = "GS";
+const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'WTS';
+const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'WTC';
 
 
 
@@ -120,6 +120,11 @@ function Room(io) {
             return;
         }
         this._turns.pauseTurns();
+        broadcastToRoomId(
+            this.id,
+            'waiting',
+            GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE
+        );
 
     }
     this.removeUser = (socketId) => {

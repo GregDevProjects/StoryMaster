@@ -1,0 +1,1 @@
+( cd client/my-app/ && npm start ) & (cd heroku/ && npm start)

@@ -31,8 +31,8 @@ function Turn(roomId, usersInRoom) {
     this.isPaused = false;
     this._story = '';
     this._roundWinners = []; 
-
     this._timerBroadcaster = new timerBroadcaster(roomId);
+
     //for when all users leave a room 
     //this will only be called by the only room left, otherwise the room will be destroyed when all users leave
     this.reset = function() {
@@ -161,16 +161,10 @@ function Turn(roomId, usersInRoom) {
             );
             resolve(winResults);
         })     
-        //need story + scores 
     }
     
     this.pauseTurns = function() {
         this._timerBroadcaster.stopTimerWithoutResolving();
-        broadcastToRoomId(
-            roomId, 
-            'waiting', 
-            'Not enough players to continue, waiting for another...'
-        );
         this.isPaused = true;
     }
 
