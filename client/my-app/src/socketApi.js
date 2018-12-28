@@ -10,14 +10,28 @@ const WRITING_TIMER_STATUS = 1;
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
 
+export function submitWriting(writing) {
+    socket.emit(
+        'msg',
+        writing
+    );
+}
+
+export function onWritingTimerTick(callBack) {
+    socket.on('turnTimer', function(msg){
+        if(msg.type === WRITING_TIMER_STATUS) {
+            callBack(msg.seconds);
+        }
+    });
+}
+
 export function onWritingStart(callBack) {
     socket.on('writing', function() {
-        console.log('called')
         callBack();
     });
 }
 
-
+//for debugging only
 export function waiting() {
     socket.on('waiting', function(msg) {
         console.log(msg);

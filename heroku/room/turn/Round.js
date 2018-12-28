@@ -12,8 +12,9 @@ function Round(number) {
         if (this._hasUserAlreadyWritten(user)) {
             return;
         }
-      
+        
         this.writings.push({message: message, user: user, userId : user.socketId});
+        console.log(this.writings)
     }
 
     this.addVote = (user, vote) => {

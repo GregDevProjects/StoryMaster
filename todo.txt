@@ -16,6 +16,9 @@ Security stuff
     - can't play if on the same ip 
     - captcha
 
+Forced resolution (if required)
+??? * 820px
+
 Tests
     - when timer runs out
         - placeholder writing 

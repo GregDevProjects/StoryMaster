@@ -17,7 +17,7 @@ export default class App extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { currentPage: PAGES['WritingScreen'] };
+        this.state = { currentPage: PAGES['NameScreen'] };
     }
 
     changeScreen(newPage) { 

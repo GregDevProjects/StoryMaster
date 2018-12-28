@@ -85,7 +85,7 @@ $(function () {
         );
     });
 
-    $('#submit-msg').click(function(){   
+    $('#submit-msg').click(function(){
         socket.emit(  
             'msg',
             $('textarea').val()
