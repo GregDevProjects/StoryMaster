@@ -10,6 +10,20 @@ const WRITING_TIMER_STATUS = 1;
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
 
+
+export function submitVote(userId) {
+    socket.emit(
+        'vote',
+        userId
+    )
+}
+
+export function onVotingStart(callback) {
+    socket.on('vote', function(voteChoices) {
+        callback(voteChoices);
+    });
+}
+
 export function submitWriting(writing) {
     socket.emit(
         'msg',

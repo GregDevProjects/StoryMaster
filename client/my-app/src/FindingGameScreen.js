@@ -8,8 +8,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import { onWaitingForPlayersToBeginGame, onGameStart, onWaitingForPlayersToContinueGame, onWritingStart } from './socketApi'
 
 const LOOKING_FOR_GAME = "looking for a game";
-const WAITING_FOR_GAME_START = "game found, the story will begin when enough players join";
-const WAITING_FOR_GAME_CONTINUE = "a player left, the story will continue when enough players join";
+const WAITING_FOR_GAME_START = "game found, the story will begin after enough players join";
+const WAITING_FOR_GAME_CONTINUE = "a player left, the story will continue after enough players join";
 const GAME_STARTING = "game will begin shortly";
 
 export default class FindingGameScreen extends React.Component {

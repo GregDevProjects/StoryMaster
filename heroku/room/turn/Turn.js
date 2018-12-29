@@ -232,7 +232,9 @@ function Turn(roomId, usersInRoom) {
             broadcasts.push(aBroadcast)
         });
         //(broadcasts);
+        
         broadcasts.forEach((aBroadcast) => {
+            console.log(VOTING_START_MESSAGE, aBroadcast.writings)
             broadcastToRoomId(aBroadcast.socketId, VOTING_START_MESSAGE, aBroadcast.writings);
         });
     }

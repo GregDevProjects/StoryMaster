@@ -1,15 +1,10 @@
-Get the react app talking to server
-
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
 
-As a user, I want to be able to name myself 
-    - name is letters only, 1-40 characters 
-
-
-Bugs 
-    - dash will display before quote is loaded on splashscreen
+Code stuff
+    - boot users to the loading page if enough users leave mid game
+    - should this be handled on each page or on index.js?
 
 Security stuff 
     - only accept requests from approved sites 

@@ -14,7 +14,6 @@ function Round(number) {
         }
         
         this.writings.push({message: message, user: user, userId : user.socketId});
-        console.log(this.writings)
     }
 
     this.addVote = (user, vote) => {
@@ -52,9 +51,6 @@ function Round(number) {
     }
 
     this._getWritingsMergedWithVotes = () => {
-      
-        
-        
         return _(this.writings)
             .concat(this.votes)
             .groupBy("userId")
