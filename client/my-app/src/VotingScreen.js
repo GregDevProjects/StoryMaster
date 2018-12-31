@@ -7,23 +7,10 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import { submitVote } from './socketApi'
+import { submitVote, onVotingTimerTick, onRoundResults, unsubscribeListener } from './socketApi'
 
 const WRITING_TIME_TOTAL= 15;
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
-
-const votes =  [ 
-    { 
-       "user": "T1WQGXpQkTczt1wkAAAF",
-       "message":"b was too slow to submit a writing in time, so this is their entry :("
-   },
-   { 
-       "user":"wG5nacR7yx-nj7mQAAAE",
-       "message":"c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :(c was too slow to submit a writing in time, so this is their entry :("
-   } 
-]
-
-
 
 export default class VotingScreen extends React.Component {
 
@@ -34,21 +21,38 @@ export default class VotingScreen extends React.Component {
             isVoteSubmitted: false,
             votingTimeLeft: 10
         };
+
+        this.votes = props.props.votes;
+    }
+
+    componentDidMount() {
+        onVotingTimerTick((countDownValue) => { 
+            this.setState({
+                votingTimeLeft: countDownValue
+            })
+        });
+
+        onRoundResults((results) => {
+            this.props.changeScreen('RoundResultsScreen', {results: results});
+        })
+    }
+
+    componentWillUnmount() {
+        unsubscribeListener('turnTimer');
+        unsubscribeListener('results');
     }
 
     sendVote(user) {
-        console.log(user)
         this.setState({
             isVoteSubmitted: true
         })
-
-        //submitVote(user);
+        submitVote(user);
     }
 
     render() {
         const isVoteSubmitted = this.state.isVoteSubmitted;
         const votingTimeLeft = this.state.votingTimeLeft;
-
+        const votes = this.votes;
         
 
         return (
@@ -93,10 +97,10 @@ export default class VotingScreen extends React.Component {
                         in={!isVoteSubmitted}
                     >
                         <div>
-                        <Votes
-                            votes={votes}
-                            sendVote={this.sendVote.bind(this)}
-                        />
+                            <Votes
+                                votes={votes}
+                                sendVote={this.sendVote.bind(this)}
+                            />
                         </div>
                     </Fade>
                 <HelpButton/>
@@ -106,16 +110,13 @@ export default class VotingScreen extends React.Component {
 }
 
 class Votes extends React.Component {
-    // console.log(votess)
     constructor(props) {
         super(props);
-        
-        console.log(props)
+        this.votes = props.votes;
     }
 
-
     render(){
-        const voteCards = votes.map((vote) =>
+        const voteCards = this.votes.map((vote) =>
         <Card
             key={vote.user}
             style={{width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"20px"}}

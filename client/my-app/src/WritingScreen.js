@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 //https://material.io/design/components/progress-indicators.html#linear-progress-indicators
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
-import { onWritingTimerTick, submitWriting, onVotingStart } from './socketApi'
+import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from './socketApi'
 
 const WRITING_TIME_TOTAL= 15;
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
@@ -21,15 +21,23 @@ export default class WritingScreen extends React.Component {
             isWritingSubmitted: false,
             writing: ""
         };
-        onWritingTimerTick((countDownValue)=>
-        { 
+
+    }
+
+    componentDidMount() {
+        onWritingTimerTick((countDownValue) => { 
             this.setState({
                 writingTimeLeft: countDownValue
             })
         });
         onVotingStart((results) => {
-            console.log(results);
+            this.props.changeScreen('VotingScreen', {votes: results});
         });
+    }
+
+    componentWillUnmount() {
+        unsubscribeListener('turnTimer');
+        unsubscribeListener('vote');
     }
 
     render() {

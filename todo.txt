@@ -1,23 +1,28 @@
+-------Architecture-------
+put callback functions from the socketApi in a parent component above the Screens
+    -right now the functions are being called even if the component is unmounted 
+
+have an option to force a resolution on the game (for newgrounds)
+    - ??? x 820px
+/-------Architecture-------
+
+-------User Stories-------
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
+/-------User Stories-------
 
-Code stuff
-    - boot users to the loading page if enough users leave mid game
-    - should this be handled on each page or on index.js?
-
-Security stuff 
+-------Security-------
     - only accept requests from approved sites 
     - can't play if on the same ip 
     - captcha
+/-------Security-------
 
-Forced resolution (if required)
-??? * 820px
-
-Tests
+-------Tests-------
     - when timer runs out
         - placeholder writing 
         - random votes 
     - joining a game in progress 
         - continues round 
         - restarts round
+/------Tests-------
