@@ -45,7 +45,7 @@ export default class FindingGameScreen extends React.Component {
 
     componentWillUnmount() {
         unsubscribeListener('waiting');
-        unsubscribeListener('writing')
+        unsubscribeListener('writing');
     }
 
     render() {

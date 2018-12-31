@@ -8,13 +8,23 @@ const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'WTS';
 const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'WTC';
 const WRITING_TIMER_STATUS = 1;
 const VOTING_TIMER_STATUS = 2;
+const DISPLAYING_INFO_TIMER_STATUS = 3;
+
+export function onResultsTimerTick(callBack) {
+    socket.on('turnTimer', function(msg){
+        if(msg.type === DISPLAYING_INFO_TIMER_STATUS) {
+            callBack(msg.seconds);
+        }
+    });   
+}
 
 export function unsubscribeListener(eventName) {
     socket.off(eventName);
 }
 
+//gets the story so far and the round winners
 export function onRoundResults(callBack) {
-    socket.on('results', function(roundResults){
+    socket.on('roundOver', function(roundResults){
         callBack(roundResults);
     })
 }

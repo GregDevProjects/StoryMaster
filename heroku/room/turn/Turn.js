@@ -16,7 +16,7 @@ const TurnStatus = {
 
 const SECONDS_TO_WRITE = 15;
 const SECONDS_TO_VOTE = 15;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
+const SECONDS_TO_SHOW_ROUND_RESULTS = 10;
 const SECONDS_TO_SHOW_GAME_OVER = 5;
 const ROUNDS_PER_GAME = 3
 const WRITING_START_MESSAGE = 'writing';
@@ -67,7 +67,6 @@ function Turn(roomId, usersInRoom) {
         for(let i = 0; i < ROUNDS_PER_GAME; i++) {
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
             broadcastToRoomId(roomId, 'roundStart');
-            console.log('round started')
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);

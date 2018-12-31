@@ -103,7 +103,6 @@ export default class WritingScreen extends React.Component {
                                 multiline
                                 rowsMax="4"
                                 onChange={ (event) => {
-                                    console.log(event)
                                     this.setState({
                                         writing: event.target.value
                                     })

@@ -10,6 +10,11 @@ have an option to force a resolution on the game (for newgrounds)
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
+
+As a user, I want to be informed when the game can't continue
+    -server error
+    -too many players leave
+
 /-------User Stories-------
 
 -------Security-------
