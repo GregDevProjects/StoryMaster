@@ -14,9 +14,9 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 15;
-const SECONDS_TO_VOTE = 15;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 10;
+const SECONDS_TO_WRITE = 2;
+const SECONDS_TO_VOTE = 2;
+const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
 const SECONDS_TO_SHOW_GAME_OVER = 5;
 const ROUNDS_PER_GAME = 3
 const WRITING_START_MESSAGE = 'writing';
@@ -233,7 +233,6 @@ function Turn(roomId, usersInRoom) {
         //(broadcasts);
         
         broadcasts.forEach((aBroadcast) => {
-            console.log(VOTING_START_MESSAGE, aBroadcast.writings)
             broadcastToRoomId(aBroadcast.socketId, VOTING_START_MESSAGE, aBroadcast.writings);
         });
     }

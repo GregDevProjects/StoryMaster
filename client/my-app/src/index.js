@@ -7,6 +7,7 @@ import FindingGameScreen from './FindingGameScreen';
 import WritingScreen from './WritingScreen';
 import VotingScreen from './VotingScreen';
 import RoundResultsScreen from './RoundResultsScreen';
+import { onStoryResultUpdate, waiting } from './socketApi';
 
 const PAGES = {
     'SplashScreen' : SplashScreen,
@@ -24,6 +25,18 @@ export default class App extends React.Component {
         this.state = { 
             currentPage: PAGES['NameScreen'] 
         };
+        this.story = "";
+    }
+
+    componentDidMount() {
+        onStoryResultUpdate((story, score) => {
+            console.log(story, score);
+            this.story = story;
+        })
+
+        waiting((msg) =>{
+            console.log(msg)
+        })
     }
 
     changeScreen(newPage, otherProps) { 
@@ -46,7 +59,7 @@ export default class App extends React.Component {
         return (
             <React.Fragment>
                 <CssBaseline />
-                <CurrentPage changeScreen={this.changeScreen.bind(this)} props={currentPageProps} />
+                <CurrentPage story={this.story} changeScreen={this.changeScreen.bind(this)} props={currentPageProps} />
             </React.Fragment>
         )
     }

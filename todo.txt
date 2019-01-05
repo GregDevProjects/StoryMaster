@@ -1,12 +1,13 @@
 -------Architecture-------
-put callback functions from the socketApi in a parent component above the Screens
-    -right now the functions are being called even if the component is unmounted 
-
 have an option to force a resolution on the game (for newgrounds)
     - ??? x 820px
 /-------Architecture-------
 
 -------User Stories-------
+As a user, I want a way to keep track of the rounds left in the game and get the current score
+
+As a user, I want a game over screen to show the game results and the amount of time until the next game
+
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
@@ -14,6 +15,11 @@ As a user, I want to be able to learn how to play the game
 As a user, I want to be informed when the game can't continue
     -server error
     -too many players leave
+
+Show round results in order of highest scoring
+
+Give more status updates when waiting for a game to start 
+    - show how many more players needed  
 
 /-------User Stories-------
 

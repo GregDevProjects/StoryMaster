@@ -10,6 +10,20 @@ const WRITING_TIMER_STATUS = 1;
 const VOTING_TIMER_STATUS = 2;
 const DISPLAYING_INFO_TIMER_STATUS = 3;
 
+export function roundStart(callBack) {
+    socket.on('roundStart', function() {
+        callBack();
+    });
+}
+
+//gives the story so far and number of rounds won by each player
+export function onStoryResultUpdate(callBack) {
+    socket.on('results', function(msg) {
+        console.log('called res')
+        callBack(msg.story, msg.score);
+    });
+}
+
 export function onResultsTimerTick(callBack) {
     socket.on('turnTimer', function(msg){
         if(msg.type === DISPLAYING_INFO_TIMER_STATUS) {
@@ -22,7 +36,7 @@ export function unsubscribeListener(eventName) {
     socket.off(eventName);
 }
 
-//gets the story so far and the round winners
+//gives the number of votes for each writing, and the winning writing
 export function onRoundResults(callBack) {
     socket.on('roundOver', function(roundResults){
         callBack(roundResults);
@@ -72,9 +86,10 @@ export function onWritingStart(callBack) {
 }
 
 //for debugging only
-export function waiting() {
+export function waiting(callBack) {
     socket.on('waiting', function(msg) {
         console.log(msg);
+        callBack(msg);
     });
 }
 

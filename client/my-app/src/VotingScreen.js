@@ -37,7 +37,7 @@ export default class VotingScreen extends React.Component {
 
     componentWillUnmount() {
         unsubscribeListener('turnTimer');
-        unsubscribeListener('results');
+        unsubscribeListener('roundOver');
     }
 
     sendVote(user) {

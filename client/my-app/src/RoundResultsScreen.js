@@ -9,14 +9,13 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
-import { onResultsTimerTick, unsubscribeListener } from './socketApi'
+import { onResultsTimerTick, unsubscribeListener, roundStart } from './socketApi'
 
 
 export default class RoundResults extends React.Component {
 
     constructor(props) {
         super(props);
-        console.log('props', props);
         this.results = props.props.results;
         this.state = {};
     }
@@ -27,6 +26,9 @@ export default class RoundResults extends React.Component {
                 displayingInfoTimeLeft: countDownValue,
                 totalDisplayInfoTime: totalSeconds
             })
+        })
+        roundStart(()=>{
+            this.props.changeScreen('WritingScreen', {});
         })
     }
 
