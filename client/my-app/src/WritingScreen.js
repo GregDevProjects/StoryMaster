@@ -9,7 +9,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from './socketApi'
 
-const WRITING_TIME_TOTAL= 15;
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
 
 export default class WritingScreen extends React.Component {
@@ -17,7 +16,6 @@ export default class WritingScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            writingTimeLeft: WRITING_TIME_TOTAL,
             isWritingSubmitted: false,
             writing: ""
         };
@@ -25,9 +23,10 @@ export default class WritingScreen extends React.Component {
     }
 
     componentDidMount() {
-        onWritingTimerTick((countDownValue) => { 
+        onWritingTimerTick((countDownValue, totalSeconds) => { 
             this.setState({
-                writingTimeLeft: countDownValue
+                writingTimeLeft: countDownValue,
+                totalWritingTime: totalSeconds
             })
         });
         onVotingStart((results) => {
@@ -42,6 +41,7 @@ export default class WritingScreen extends React.Component {
 
     render() {
         const writingTimeLeft = this.state.writingTimeLeft;
+        const totalWritingTime = this.state.totalWritingTime;
         const isWritingSubmitted = this.state.isWritingSubmitted;
         const writing = this.state.writing;
         return (
@@ -63,7 +63,7 @@ export default class WritingScreen extends React.Component {
                         >
                             { isWritingSubmitted
                               ? "waiting for other players"
-                              : writingTimeLeft + " left to write"
+                              : writingTimeLeft ? writingTimeLeft  + " left to write" : "writing"
                             }
                         </Typography>
                     </Grid>
@@ -78,7 +78,7 @@ export default class WritingScreen extends React.Component {
                               }
                         value={ isWritingSubmitted
                                 ? null
-                                : (writingTimeLeft/WRITING_TIME_TOTAL) * 100
+                                : (writingTimeLeft/totalWritingTime) * 100
                               }
                     />
                     <TextField

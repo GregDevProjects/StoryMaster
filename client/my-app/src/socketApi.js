@@ -13,7 +13,7 @@ const DISPLAYING_INFO_TIMER_STATUS = 3;
 export function onResultsTimerTick(callBack) {
     socket.on('turnTimer', function(msg){
         if(msg.type === DISPLAYING_INFO_TIMER_STATUS) {
-            callBack(msg.seconds);
+            callBack(msg.seconds, msg.totalSeconds);
         }
     });   
 }
@@ -32,7 +32,7 @@ export function onRoundResults(callBack) {
 export function onVotingTimerTick(callBack) {
     socket.on('turnTimer', function(msg){
         if(msg.type === VOTING_TIMER_STATUS) {
-            callBack(msg.seconds);
+            callBack(msg.seconds, msg.totalSeconds);
         }
     });
 }
@@ -60,7 +60,7 @@ export function submitWriting(writing) {
 export function onWritingTimerTick(callBack) {
     socket.on('turnTimer', function(msg){
         if(msg.type === WRITING_TIMER_STATUS) {
-            callBack(msg.seconds);
+            callBack(msg.seconds, msg.totalSeconds);
         }
     });
 }

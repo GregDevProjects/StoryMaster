@@ -9,8 +9,6 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { submitVote, onVotingTimerTick, onRoundResults, unsubscribeListener } from './socketApi'
 
-const WRITING_TIME_TOTAL= 15;
-const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
 
 export default class VotingScreen extends React.Component {
 
@@ -19,16 +17,16 @@ export default class VotingScreen extends React.Component {
         
         this.state = {
             isVoteSubmitted: false,
-            votingTimeLeft: 10
         };
 
         this.votes = props.props.votes;
     }
 
     componentDidMount() {
-        onVotingTimerTick((countDownValue) => { 
+        onVotingTimerTick((countDownValue, totalSeconds) => { 
             this.setState({
-                votingTimeLeft: countDownValue
+                votingTimeLeft: countDownValue,
+                totalVotingTime: totalSeconds
             })
         });
 
@@ -53,7 +51,7 @@ export default class VotingScreen extends React.Component {
         const isVoteSubmitted = this.state.isVoteSubmitted;
         const votingTimeLeft = this.state.votingTimeLeft;
         const votes = this.votes;
-        
+        const totalVotingTime = this.state.totalVotingTime;
 
         return (
             <React.Fragment>
@@ -74,7 +72,7 @@ export default class VotingScreen extends React.Component {
                         >
                             { isVoteSubmitted
                               ? "waiting for other players"
-                              : votingTimeLeft + " left to vote"
+                              : votingTimeLeft ? votingTimeLeft + " left to vote" : "voting"
                             }
                         </Typography>
                     </Grid>
@@ -89,7 +87,7 @@ export default class VotingScreen extends React.Component {
                               }
                         value={ isVoteSubmitted
                                 ? null
-                                : (votingTimeLeft/WRITING_TIME_TOTAL) * 100
+                                : (votingTimeLeft/totalVotingTime) * 100
                               }
                     />
 

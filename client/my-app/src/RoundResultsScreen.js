@@ -11,7 +11,6 @@ import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import { onResultsTimerTick, unsubscribeListener } from './socketApi'
 
-const DISPLAY_INFO_TIME = 10;
 
 export default class RoundResults extends React.Component {
 
@@ -19,15 +18,14 @@ export default class RoundResults extends React.Component {
         super(props);
         console.log('props', props);
         this.results = props.props.results;
-        this.state = {
-            displayingInfoTimeLeft: DISPLAY_INFO_TIME
-        };
+        this.state = {};
     }
 
     componentDidMount() {
-        onResultsTimerTick((countDownValue) => {
+        onResultsTimerTick((countDownValue, totalSeconds) => {
             this.setState({
-                displayingInfoTimeLeft: countDownValue
+                displayingInfoTimeLeft: countDownValue,
+                totalDisplayInfoTime: totalSeconds
             })
         })
     }
@@ -40,6 +38,7 @@ export default class RoundResults extends React.Component {
         const results = this.results;
         const winner = this.results.winner;
         const displayingInfoTimeLeft = this.state.displayingInfoTimeLeft;
+        const totalDisplayInfoTime = this.state.totalDisplayInfoTime;
 
         return (
             <React.Fragment>
@@ -64,7 +63,7 @@ export default class RoundResults extends React.Component {
                 <LinearProgress 
                     variant="determinate"
                     color="secondary"
-                    value={(displayingInfoTimeLeft/DISPLAY_INFO_TIME) * 100}
+                    value={(displayingInfoTimeLeft/totalDisplayInfoTime) * 100}
                 />
                 <WritingResults
                     results={results}

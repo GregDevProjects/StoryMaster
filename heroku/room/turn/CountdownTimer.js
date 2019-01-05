@@ -16,12 +16,14 @@ function TimerBroadcaster(roomId) {
                     clearInterval(this._turnTimer);
                     resolve();
                 }
+                console.log(durationSeconds)
                 broadcastToRoomId(
                     this._roomId, 
                     'turnTimer', 
                     {
                         seconds: this._countdown,
-                        type: type
+                        type: type,
+                        totalSeconds: durationSeconds
                     }
                 );
 
