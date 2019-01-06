@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from './socketApi'
+import StoryDrawer from './StoryDrawer'
 
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
 
@@ -17,7 +18,8 @@ export default class WritingScreen extends React.Component {
         super(props);
         this.state = {
             isWritingSubmitted: false,
-            writing: ""
+            writing: "",
+            showStory: false
         };
         this.story = props.story;
     }
@@ -137,8 +139,14 @@ export default class WritingScreen extends React.Component {
                 <HelpButton
                     position="left"
                     fontAwesomeIcon="fas fa-book"
-                    onClick={ ()=>{ alert('help') } }
+                    onClick={ ()=>{ this.setState({showStory: true}) } }
                 />
+                <StoryDrawer
+                    open={this.state.showStory}
+                    close={() => { this.setState({showStory: false})}}
+                    story={this.story}
+                >
+                </StoryDrawer>
             </React.Fragment>
         );
     }

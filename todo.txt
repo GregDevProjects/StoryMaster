@@ -4,6 +4,9 @@ have an option to force a resolution on the game (for newgrounds)
 /-------Architecture-------
 
 -------User Stories-------
+As a user, I want to be able to submit by pressing enter on the keyboard 
+    -use a form?
+
 As a user, I want a way to keep track of the rounds left in the game and get the current score
 
 As a user, I want a game over screen to show the game results and the amount of time until the next game
@@ -22,6 +25,10 @@ Give more status updates when waiting for a game to start
     - show how many more players needed  
 
 /-------User Stories-------
+
+-------Bugs-------
+    - clear writing on game over
+/-------Security-------
 
 -------Security-------
     - only accept requests from approved sites 

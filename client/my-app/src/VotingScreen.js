@@ -8,7 +8,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { submitVote, onVotingTimerTick, onRoundResults, unsubscribeListener } from './socketApi'
-
+import StoryDrawer from './StoryDrawer'
 
 export default class VotingScreen extends React.Component {
 
@@ -17,8 +17,9 @@ export default class VotingScreen extends React.Component {
         
         this.state = {
             isVoteSubmitted: false,
+            showStory: false
         };
-
+        this.story = props.story;
         this.votes = props.props.votes;
     }
 
@@ -109,8 +110,14 @@ export default class VotingScreen extends React.Component {
                 <HelpButton
                     position="left"
                     fontAwesomeIcon="fas fa-book"
-                    onClick={ ()=>{ alert('help') } }
+                    onClick={ ()=>{ this.setState({showStory: true}) } }
                 />
+                <StoryDrawer
+                    open={this.state.showStory}
+                    close={() => { this.setState({showStory: false})}}
+                    story={this.story}
+                >
+                </StoryDrawer>
             </React.Fragment>
         );
     }

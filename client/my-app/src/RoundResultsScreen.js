@@ -10,21 +10,22 @@ import CardHeader from '@material-ui/core/CardHeader';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import { onResultsTimerTick, unsubscribeListener, roundStart } from './socketApi'
-
+import StoryDrawer from './StoryDrawer'
 
 export default class RoundResults extends React.Component {
 
     constructor(props) {
         super(props);
         this.results = props.props.results;
-        this.state = {};
+        this.state = {showStory: false};
+        this.story = this.props.story;
     }
 
     componentDidMount() {
         onResultsTimerTick((countDownValue, totalSeconds) => {
             this.setState({
                 displayingInfoTimeLeft: countDownValue,
-                totalDisplayInfoTime: totalSeconds
+                totalDisplayInfoTime: totalSeconds,
             })
         })
         roundStart(()=>{
@@ -79,8 +80,13 @@ export default class RoundResults extends React.Component {
                 <HelpButton
                     position="left"
                     fontAwesomeIcon="fas fa-book"
-                    onClick={ ()=>{ alert('help') } }
+                    onClick={ ()=>{ this.setState({showStory: true}) } }
                 />
+                <StoryDrawer
+                    open={this.state.showStory}
+                    close={() => { this.setState({showStory: false})}}
+                    story={this.story}
+                ></StoryDrawer>
             </React.Fragment>
         );
     }

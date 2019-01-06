@@ -33,9 +33,9 @@ export default class HelpButton extends React.Component {
                 float:"right",
                 margin: 0,
                 top: 'auto',
-                right: this.position == 'right' ? 20 : 'auto',
+                right: this.position === 'right' ? 20 : 'auto',
                 bottom: 20,
-                left: this.position == 'left' ? 20 : 'auto',
+                left: this.position === 'left' ? 20 : 'auto',
                 position: 'fixed',
             }}
         >
