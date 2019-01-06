@@ -71,7 +71,16 @@ export default class RoundResults extends React.Component {
                     results={results}
                 >
                 </WritingResults>
-                <HelpButton/>
+                <HelpButton
+                    position="right"
+                    fontAwesomeIcon="fas fa-list-ol"
+                    onClick={ ()=>{ alert('help') } }
+                />
+                <HelpButton
+                    position="left"
+                    fontAwesomeIcon="fas fa-book"
+                    onClick={ ()=>{ alert('help') } }
+                />
             </React.Fragment>
         );
     }

@@ -129,7 +129,16 @@ export default class WritingScreen extends React.Component {
                             </Grid>                     
                         </div>
                     </Fade>
-                <HelpButton/>
+                <HelpButton
+                    position="right"
+                    fontAwesomeIcon="fas fa-list-ol"
+                    onClick={ ()=>{ alert('help') } }
+                />
+                <HelpButton
+                    position="left"
+                    fontAwesomeIcon="fas fa-book"
+                    onClick={ ()=>{ alert('help') } }
+                />
             </React.Fragment>
         );
     }

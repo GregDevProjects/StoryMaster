@@ -83,8 +83,11 @@ export default class SplashScreen extends React.Component {
                     </Button>
                     </Typography>
                 </Grid>
-                <HelpButton/>
-               
+                <HelpButton
+                    position="right"
+                    fontAwesomeIcon="fas fa-question"
+                    onClick={ ()=>{ alert('help') } }
+                />
             </React.Fragment>
         )
     }

@@ -7,6 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 //https://material.io/design/components/progress-indicators.html#linear-progress-indicators
 import LinearProgress from '@material-ui/core/LinearProgress';
+import Drawer from '@material-ui/core/Drawer';
 import { connect, onConnection, submitName } from './socketApi'
 
 export default class NameScreen extends React.Component {
@@ -108,7 +109,11 @@ export default class NameScreen extends React.Component {
                         </Grid>
                     </div>
                     </Fade>
-                <HelpButton/>
+                <HelpButton
+                    position="right"
+                    fontAwesomeIcon="fas fa-question"
+                    onClick={ ()=>{ alert('help') } }
+                />
             </React.Fragment>
         );
     }

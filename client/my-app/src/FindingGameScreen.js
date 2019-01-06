@@ -75,7 +75,11 @@ export default class FindingGameScreen extends React.Component {
                     <LinearProgress />
                 </div>
                 </Fade>
-                <HelpButton/>
+                <HelpButton
+                    position="right"
+                    fontAwesomeIcon="fas fa-list-ol"
+                    onClick={ ()=>{ alert('help') } }
+                />
             </React.Fragment>
         );
     }

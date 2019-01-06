@@ -101,7 +101,16 @@ export default class VotingScreen extends React.Component {
                             />
                         </div>
                     </Fade>
-                <HelpButton/>
+                <HelpButton
+                    position="right"
+                    fontAwesomeIcon="fas fa-list-ol"
+                    onClick={ ()=>{ alert('help') } }
+                />
+                <HelpButton
+                    position="left"
+                    fontAwesomeIcon="fas fa-book"
+                    onClick={ ()=>{ alert('help') } }
+                />
             </React.Fragment>
         );
     }
