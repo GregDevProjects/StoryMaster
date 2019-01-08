@@ -43,7 +43,7 @@ function Round(number) {
                 if (aMerge['userId'] != prop ) {
                     return;
                 }
-                merged[index]['votes'] = score[prop]
+                merged[index]['votes'] = score[prop];
             }) 
         }
 

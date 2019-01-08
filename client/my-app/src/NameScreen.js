@@ -1,5 +1,5 @@
 import React from "react";
-import HelpButton from './HelpButton'
+import FabIconButton from './FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -44,7 +44,7 @@ export default class NameScreen extends React.Component {
     render() {
         const  isLoading  = this.state.isLoading;
         const  inputValidationError  = this.state.inputValidationError;
-        console.log(this.state.showStory)
+        console.log(this.state.showScore)
         return (
             <React.Fragment>
                 <Fade in={isLoading}>
@@ -110,10 +110,11 @@ export default class NameScreen extends React.Component {
                         </Grid>
                     </div>
                     </Fade>
-                <HelpButton
+                <FabIconButton
                     position="right"
                     fontAwesomeIcon="fas fa-question"
-                    onClick={ ()=>{ this.setState({showStory: true}) } }
+                    onClick={ ()=>{ this.setState({showScore: true}) } }
+                   
                 />         
             </React.Fragment>
             

@@ -1,5 +1,5 @@
 import React from "react";
-import HelpButton from './HelpButton'
+import FabIconButton from './FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -11,6 +11,7 @@ import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
 import { onResultsTimerTick, unsubscribeListener, roundStart } from './socketApi'
 import StoryDrawer from './StoryDrawer'
+import ScoreDrawer from './ScoreDrawer'
 
 export default class RoundResults extends React.Component {
 
@@ -19,6 +20,7 @@ export default class RoundResults extends React.Component {
         this.results = props.props.results;
         this.state = {showStory: false};
         this.story = this.props.story;
+        this.scores = props.scores;
     }
 
     componentDidMount() {
@@ -72,12 +74,12 @@ export default class RoundResults extends React.Component {
                     results={results}
                 >
                 </WritingResults>
-                <HelpButton
+                <FabIconButton
                     position="right"
                     fontAwesomeIcon="fas fa-list-ol"
-                    onClick={ ()=>{ alert('help') } }
+                    onClick={ ()=>{ this.setState({showScore: true}) }}
                 />
-                <HelpButton
+                <FabIconButton
                     position="left"
                     fontAwesomeIcon="fas fa-book"
                     onClick={ ()=>{ this.setState({showStory: true}) } }
@@ -87,6 +89,11 @@ export default class RoundResults extends React.Component {
                     close={() => { this.setState({showStory: false})}}
                     story={this.story}
                 ></StoryDrawer>
+                <ScoreDrawer
+                    open={this.state.showScore}
+                    close={() => { this.setState({showScore: false})}}
+                    scores={this.scores}
+                />
             </React.Fragment>
         );
     }

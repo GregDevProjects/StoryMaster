@@ -30,12 +30,8 @@ export default class App extends React.Component {
 
     componentDidMount() {
         onStoryResultUpdate((story, score) => {
-            console.log(story, score);
+            this.scores = score;
             this.story = story;
-        })
-
-        waiting((msg) =>{
-            console.log(msg)
         })
     }
 
@@ -59,7 +55,12 @@ export default class App extends React.Component {
         return (
             <React.Fragment>
                 <CssBaseline />
-                <CurrentPage story={this.story} changeScreen={this.changeScreen.bind(this)} props={currentPageProps} />
+                <CurrentPage 
+                    story={this.story} 
+                    scores={this.scores}
+                    changeScreen={this.changeScreen.bind(this)} 
+                    props={currentPageProps}
+                />
             </React.Fragment>
         )
     }

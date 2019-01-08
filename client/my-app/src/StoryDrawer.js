@@ -36,5 +36,3 @@ const StyledDrawer = withStyles({
             </StyledDrawer>
         )
     }
-
-

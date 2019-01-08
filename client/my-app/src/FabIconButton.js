@@ -5,7 +5,7 @@ import Fab from '@material-ui/core/Fab';
 
 
 
-export default class HelpButton extends React.Component {
+export default class FabIconButton extends React.Component {
 
     constructor(props) {
         super(props);

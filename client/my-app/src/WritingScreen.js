@@ -1,5 +1,5 @@
 import React from "react";
-import HelpButton from './HelpButton'
+import FabIconButton from './FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +9,7 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from './socketApi'
 import StoryDrawer from './StoryDrawer'
+import ScoreDrawer from './ScoreDrawer'
 
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
 
@@ -22,6 +23,7 @@ export default class WritingScreen extends React.Component {
             showStory: false
         };
         this.story = props.story;
+        this.scores = props.scores;
     }
 
     componentDidMount() {
@@ -131,12 +133,12 @@ export default class WritingScreen extends React.Component {
                             </Grid>                     
                         </div>
                     </Fade>
-                <HelpButton
+                <FabIconButton
                     position="right"
                     fontAwesomeIcon="fas fa-list-ol"
-                    onClick={ ()=>{ alert('help') } }
+                    onClick={ ()=>{ this.setState({showScore: true}) } }
                 />
-                <HelpButton
+                <FabIconButton
                     position="left"
                     fontAwesomeIcon="fas fa-book"
                     onClick={ ()=>{ this.setState({showStory: true}) } }
@@ -145,8 +147,13 @@ export default class WritingScreen extends React.Component {
                     open={this.state.showStory}
                     close={() => { this.setState({showStory: false})}}
                     story={this.story}
-                >
-                </StoryDrawer>
+                />
+                <ScoreDrawer
+                    open={this.state.showScore}
+                    close={() => { this.setState({showScore: false})}}
+                    scores={this.scores}
+                />
+
             </React.Fragment>
         );
     }

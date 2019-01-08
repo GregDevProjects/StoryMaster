@@ -1,5 +1,5 @@
 import React from "react";
-import HelpButton from './HelpButton'
+import FabIconButton from './FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -75,7 +75,7 @@ export default class FindingGameScreen extends React.Component {
                     <LinearProgress />
                 </div>
                 </Fade>
-                <HelpButton
+                <FabIconButton
                     position="right"
                     fontAwesomeIcon="fas fa-list-ol"
                     onClick={ ()=>{ alert('help') } }

@@ -14,11 +14,11 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 2;
-const SECONDS_TO_VOTE = 2;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
+const SECONDS_TO_WRITE = 5;
+const SECONDS_TO_VOTE = 5;
+const SECONDS_TO_SHOW_ROUND_RESULTS = 5;
 const SECONDS_TO_SHOW_GAME_OVER = 5;
-const ROUNDS_PER_GAME = 3
+const ROUNDS_PER_GAME = 10
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
 
