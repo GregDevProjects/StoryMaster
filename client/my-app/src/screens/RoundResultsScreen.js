@@ -1,5 +1,5 @@
 import React from "react";
-import FabIconButton from './FabIconButton'
+import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -9,9 +9,9 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Badge from '@material-ui/core/Badge';
 import { withStyles } from '@material-ui/core/styles';
-import { onResultsTimerTick, unsubscribeListener, roundStart } from './socketApi'
-import StoryDrawer from './StoryDrawer'
-import ScoreDrawer from './ScoreDrawer'
+import { onResultsTimerTick, unsubscribeListener, roundStart } from '../socketApi'
+import StoryDrawer from '../components/StoryDrawer'
+import ScoreDrawer from '../components/ScoreDrawer'
 
 export default class RoundResults extends React.Component {
 
@@ -62,7 +62,7 @@ export default class RoundResults extends React.Component {
                             textAlign: "center"
                         }}
                     >
-                        {winner.user.name} won the round!
+                        {winner.user.name} won the round
                     </Typography>
                 </Grid>
                 <LinearProgress 

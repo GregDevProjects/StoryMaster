@@ -1,11 +1,11 @@
 import React from "react";
-import FabIconButton from './FabIconButton'
+import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 //https://material.io/design/components/progress-indicators.html#linear-progress-indicators
 import LinearProgress from '@material-ui/core/LinearProgress';
-import { onWaitingForPlayersToBeginGame, onGameStart, onWaitingForPlayersToContinueGame, onWritingStart, unsubscribeListener } from './socketApi'
+import { onWaitingForPlayersToBeginGame, onGameStart, onWaitingForPlayersToContinueGame, onWritingStart, unsubscribeListener } from '../socketApi'
 
 const LOOKING_FOR_GAME = "looking for a game";
 const WAITING_FOR_GAME_START = "game found, the story will begin after enough players join";

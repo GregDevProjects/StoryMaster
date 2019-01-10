@@ -4,12 +4,14 @@ have an option to force a resolution on the game (for newgrounds)
 /-------Architecture-------
 
 -------User Stories-------
+Refactor to use DeterminateStatusLoader
+
+Refactor instances where the max value is needed 
+
 As a user, I want to be able to submit by pressing enter on the keyboard 
     -use a form?
 
 As a user, I want a way to keep track of the rounds left in the game and get the current score
-
-As a user, I want a game over screen to show the game results and the amount of time until the next game
 
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
@@ -29,6 +31,7 @@ Give more status updates when waiting for a game to start
 -------Bugs-------
     - clear writing on game over
     - width of score drawer needs to be able to handle the max characters for the name 
+    - story drawer doesn't update until the round results are over
 /-------Security-------
 
 -------Security-------

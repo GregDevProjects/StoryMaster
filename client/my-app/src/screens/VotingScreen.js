@@ -1,5 +1,5 @@
 import React from "react";
-import FabIconButton from './FabIconButton'
+import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -7,9 +7,9 @@ import Grid from '@material-ui/core/Grid';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import { submitVote, onVotingTimerTick, onRoundResults, unsubscribeListener } from './socketApi'
-import StoryDrawer from './StoryDrawer'
-import ScoreDrawer from './ScoreDrawer'
+import { submitVote, onVotingTimerTick, onRoundResults, unsubscribeListener } from '../socketApi'
+import StoryDrawer from '../components/StoryDrawer'
+import ScoreDrawer from '../components/ScoreDrawer'
 
 export default class VotingScreen extends React.Component {
 

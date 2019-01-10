@@ -1,13 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import SplashScreen from './SplashScreen'
+import SplashScreen from './screens/SplashScreen'
 import CssBaseline from '@material-ui/core/CssBaseline';
-import NameScreen from './NameScreen';
-import FindingGameScreen from './FindingGameScreen';
-import WritingScreen from './WritingScreen';
-import VotingScreen from './VotingScreen';
-import RoundResultsScreen from './RoundResultsScreen';
-import { onStoryResultUpdate, waiting } from './socketApi';
+import NameScreen from './screens/NameScreen';
+import FindingGameScreen from './screens/FindingGameScreen';
+import WritingScreen from './screens/WritingScreen';
+import VotingScreen from './screens/VotingScreen';
+import RoundResultsScreen from './screens/RoundResultsScreen';
+import GameOverScreen from './screens/GameOverScreen';
+import { onStoryResultUpdate, onGameOver } from './socketApi';
 
 const PAGES = {
     'SplashScreen' : SplashScreen,
@@ -15,7 +16,8 @@ const PAGES = {
     'FindingGameScreen' : FindingGameScreen,
     'WritingScreen' : WritingScreen,
     'VotingScreen' : VotingScreen,
-    'RoundResultsScreen' : RoundResultsScreen
+    'RoundResultsScreen' : RoundResultsScreen,
+    'GameOverScreen' : GameOverScreen
 }
 
 export default class App extends React.Component {
@@ -30,8 +32,18 @@ export default class App extends React.Component {
 
     componentDidMount() {
         onStoryResultUpdate((story, score) => {
+            console.log('story update received');
             this.scores = score;
             this.story = story;
+        })
+        onGameOver((winner, story) => {
+            this.changeScreen(
+                'GameOverScreen', 
+                {
+                    winner: winner, 
+                    story: story
+                }
+            )
         })
     }
 

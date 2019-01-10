@@ -14,11 +14,11 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 5;
-const SECONDS_TO_VOTE = 5;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 5;
-const SECONDS_TO_SHOW_GAME_OVER = 5;
-const ROUNDS_PER_GAME = 10
+const SECONDS_TO_WRITE = 2;
+const SECONDS_TO_VOTE = 2;
+const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
+const SECONDS_TO_SHOW_GAME_OVER = 10;
+const ROUNDS_PER_GAME = 3
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
 
@@ -62,6 +62,17 @@ function Turn(roomId, usersInRoom) {
         return winArray;
     }
 
+    //returns { name: 'a', score: 2 }
+    this._getGameWinner = () => {
+        const countby = _.countBy(this._roundWinners, 'socketId');
+        const pairs =  _.maxBy(_.toPairs(countby),function(o){return o[1]})
+
+        const name = _.find(this._roundWinners, ['socketId', pairs[0]]).name
+        const votes = pairs[1]
+
+        return {name:name , score: votes};
+    }
+
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
         for(let i = 0; i < ROUNDS_PER_GAME; i++) {
@@ -71,7 +82,7 @@ function Turn(roomId, usersInRoom) {
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-
+            //console.log(this.getRoundWinners())
             broadcastToRoomId(
                 roomId, 
                 'results', 
@@ -87,7 +98,7 @@ function Turn(roomId, usersInRoom) {
             roomId, 
             'gameOver',
             {
-                winner : this.getRoundWinners(),
+                winner : this._getGameWinner(),
                 story : this._story
             }
         );

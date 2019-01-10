@@ -9,6 +9,21 @@ const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'WTC';
 const WRITING_TIMER_STATUS = 1;
 const VOTING_TIMER_STATUS = 2;
 const DISPLAYING_INFO_TIMER_STATUS = 3;
+const NEXT_GAME_TIMER_STATUS = 4;
+
+export function onNextGameStartTick(callBack) {
+    socket.on('turnTimer', function(msg){
+        if(msg.type === NEXT_GAME_TIMER_STATUS) {
+            callBack(msg.seconds, msg.totalSeconds);
+        }
+    });
+}
+
+export function onGameOver(callBack) {
+    socket.on('gameOver', function(msg) {
+        callBack(msg.winner, msg.story);
+    });
+}
 
 export function roundStart(callBack) {
     socket.on('roundStart', function() {
