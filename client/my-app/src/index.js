@@ -31,6 +31,9 @@ export default class App extends React.Component {
     }
 
     componentDidMount() {
+        if (this.state.currentPage === PAGES['SplashScreen']) {
+            return;
+        }
         onStoryResultUpdate((story, score) => {
             console.log('story update received');
             this.scores = score;

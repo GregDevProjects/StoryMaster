@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import StatusLoader from '../components/StatusLoader';
 
-import { connect, onConnection, submitName } from '../socketApi'
+import { connect, onConnection, submitName, unsubscribeListener } from '../socketApi'
 
 export default class NameScreen extends React.Component {
 
@@ -14,7 +14,7 @@ export default class NameScreen extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
-            inputValidationError: true
+            isValidInput: false
           };
         connect();
         onConnection(() => {
@@ -25,23 +25,42 @@ export default class NameScreen extends React.Component {
     }
     //TODO: find a validation library that can handle this
     onChange(event) {
-        this.setState({ inputValidationError: true })
+        this.setState({ isValidInput: false })
         var letters = /^[a-zA-Z]{1,30}$/;
         if (event.target.value.match(letters)) {
            this.setState(
                 { 
-                    inputValidationError: false,
+                    isValidInput: true,
                     name: event.target.value
                 }
             )
            return;
         } 
-        this.setState({ inputValidationError: true })     
+        this.setState({ isValidInput: false })     
+    }
+
+    componentWillMount() {
+        document.addEventListener("keyup", this._handleKeyPress, false);
+    }
+
+    componentWillUnmount(){
+        unsubscribeListener('waiting');
+        document.removeEventListener("keyup", this._handleKeyPress, false);
+    }
+
+    _handleKeyPress = (e) => {
+        if (e.key === 'Enter' && this.state.isValidInput) {
+            this.submitNameAndFindGame();
+        }
+    }
+    submitNameAndFindGame() {
+        submitName(this.state.name);
+        this.props.changeScreen('FindingGameScreen');    
     }
 
     render() {
         const  isLoading  = this.state.isLoading;
-        const  inputValidationError  = this.state.inputValidationError;
+        const  isValidInput  = this.state.isValidInput;
         return (
             <React.Fragment>
                 <Fade in={isLoading}>
@@ -60,8 +79,7 @@ export default class NameScreen extends React.Component {
                         >
                         <TextField
                             required
-                            error={inputValidationError}
-                            id="outlined-required"
+                            error={!isValidInput}
                             label="Name"
                             margin="normal"
                             variant="outlined"
@@ -69,6 +87,7 @@ export default class NameScreen extends React.Component {
                                 marginTop: "40px"
                             }}
                             onChange={this.onChange.bind(this)}
+                            autoFocus={true}
                         />
                         </Grid>
                         <Grid
@@ -81,10 +100,9 @@ export default class NameScreen extends React.Component {
                             color="primary"
                             style={{marginTop: 24, marginBottom: 10}}
                             onClick={()=>{
-                                submitName(this.state.name);
-                                this.props.changeScreen('FindingGameScreen');
+                                this.submitNameAndFindGame();
                             }}
-                            disabled={inputValidationError}
+                            disabled={!isValidInput}
                         >
                             FIND GAME
                         </Button>

@@ -25,6 +25,16 @@ export default class WritingScreen extends React.Component {
         this.scores = props.scores;
     }
 
+    componentWillMount() {
+        document.addEventListener("keyup", this._handleKeyPress, false);
+    }
+
+    _handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            this.sendWriting();
+        }
+    }
+
     componentDidMount() {
         onWritingTimerTick((countDownValue, totalSeconds) => { 
             this.setState({
@@ -40,13 +50,20 @@ export default class WritingScreen extends React.Component {
     componentWillUnmount() {
         unsubscribeListener('turnTimer');
         unsubscribeListener('vote');
+        document.removeEventListener("keyup", this._handleKeyPress, false);
+    }
+
+    sendWriting() {
+        this.setState({
+            isWritingSubmitted: true
+        })
+        submitWriting(this.state.writing);
     }
 
     render() {
         const writingTimeLeft = this.state.writingTimeLeft;
         const totalWritingTime = this.state.totalWritingTime;
         const isWritingSubmitted = this.state.isWritingSubmitted;
-        const writing = this.state.writing;
         return (
             <React.Fragment>
                     <StatusLoader
@@ -93,6 +110,12 @@ export default class WritingScreen extends React.Component {
                                         writing: event.target.value
                                     })
                                 } }
+                                autoFocus={true}
+                                onKeyDown={(e)=>{
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                    }
+                                }}
                             />
                             <Grid
                                 container
@@ -104,10 +127,7 @@ export default class WritingScreen extends React.Component {
                                     color="primary"
                                     style={{ marginTop: 24, marginBottom: 10 }}
                                     onClick={()=>{
-                                        this.setState({
-                                            isWritingSubmitted: true
-                                        })
-                                        submitWriting(writing);
+                                        this.sendWriting();
                                     }}
                                 >
                                     SUBMIT

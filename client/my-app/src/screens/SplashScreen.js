@@ -11,6 +11,20 @@ export default class SplashScreen extends React.Component {
         this.displayRandomQuote();     
     }
 
+    componentWillMount() {
+        document.addEventListener("keyup", this._handleKeyPress, false);
+    }
+
+    componentWillUnmount(){
+        document.removeEventListener("keyup", this._handleKeyPress, false);
+    }
+
+    _handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            this.props.changeScreen('NameScreen');
+        }
+    }
+
     displayRandomQuote() {
         const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
         const targetUrl = 'https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1';
@@ -34,7 +48,7 @@ export default class SplashScreen extends React.Component {
             }
         });
     }
-
+      
     render() {
         return (
             <React.Fragment>

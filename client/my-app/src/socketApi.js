@@ -130,7 +130,7 @@ export function onConnection(callBack) {
         }
     });
 }
-
+//this must be called before anything else
 export function connect() {
     socket = openSocket(host);
 }

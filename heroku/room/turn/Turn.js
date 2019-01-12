@@ -14,7 +14,7 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 2;
+const SECONDS_TO_WRITE = 15;
 const SECONDS_TO_VOTE = 2;
 const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
 const SECONDS_TO_SHOW_GAME_OVER = 10;
