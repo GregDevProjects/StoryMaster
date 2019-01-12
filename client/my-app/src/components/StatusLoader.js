@@ -3,9 +3,11 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import LinearProgress from '@material-ui/core/LinearProgress';
 
-export default function DeterminateStatusLoader(props) {
+export default function StatusLoader(props) {
     const percentComplete = props.percentComplete;
     const text = props.text;
+    const variant = props.variant;
+    const color = props.color;
     return <React.Fragment>
         <Grid
                 container
@@ -26,8 +28,8 @@ export default function DeterminateStatusLoader(props) {
                 </Typography>
             </Grid>
             <LinearProgress 
-                variant="determinate"
-                color="secondary"
+                variant={variant}
+                color={color}
                 value={percentComplete * 100}
             />
     </React.Fragment>

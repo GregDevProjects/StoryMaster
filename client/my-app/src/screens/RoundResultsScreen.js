@@ -1,10 +1,5 @@
 import React from "react";
 import FabIconButton from '../components/FabIconButton'
-import Fade from '@material-ui/core/Fade';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-//https://material.io/design/components/progress-indicators.html#linear-progress-indicators
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import Badge from '@material-ui/core/Badge';
@@ -12,6 +7,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { onResultsTimerTick, unsubscribeListener, roundStart } from '../socketApi'
 import StoryDrawer from '../components/StoryDrawer'
 import ScoreDrawer from '../components/ScoreDrawer'
+import StatusLoader from '../components/StatusLoader'
 
 export default class RoundResults extends React.Component {
 
@@ -47,28 +43,11 @@ export default class RoundResults extends React.Component {
 
         return (
             <React.Fragment>
-                <Grid
-                    container
-                    justify="center"
-                    alignItems="center"
-                >
-                    <Typography
-                        style={{
-                            display: "inline-block",
-                            marginLeft: "10px",
-                            position: "relative",
-                            fontSize: "20px",
-                            bottom: "3px",
-                            textAlign: "center"
-                        }}
-                    >
-                        {winner.user.name} won the round
-                    </Typography>
-                </Grid>
-                <LinearProgress 
+                <StatusLoader
                     variant="determinate"
                     color="secondary"
-                    value={(displayingInfoTimeLeft/totalDisplayInfoTime) * 100}
+                    percentComplete={displayingInfoTimeLeft/totalDisplayInfoTime}
+                    text={winner.user.name + " won the round"}                        
                 />
                 <WritingResults
                     results={results}

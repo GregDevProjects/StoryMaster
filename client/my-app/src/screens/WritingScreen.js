@@ -2,14 +2,13 @@ import React from "react";
 import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-//https://material.io/design/components/progress-indicators.html#linear-progress-indicators
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Button from '@material-ui/core/Button';
 import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from '../socketApi'
 import StoryDrawer from '../components/StoryDrawer'
 import ScoreDrawer from '../components/ScoreDrawer'
+
+import StatusLoader from '../components/StatusLoader'
 
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
 
@@ -50,40 +49,23 @@ export default class WritingScreen extends React.Component {
         const writing = this.state.writing;
         return (
             <React.Fragment>
-                    <Grid
-                        container
-                        justify="center"
-                        alignItems="center"
-                    >
-                        <Typography
-                            style={{
-                                display: "inline-block",
-                                marginLeft: "10px",
-                                position: "relative",
-                                fontSize: "20px",
-                                bottom: "3px",
-                                textAlign: "center"
-                            }}
-                        >
-                            { isWritingSubmitted
-                              ? "waiting for other players"
-                              : writingTimeLeft ? writingTimeLeft  + " left to write" : "writing"
-                            }
-                        </Typography>
-                    </Grid>
-                    <LinearProgress 
+                    <StatusLoader
                         variant={ isWritingSubmitted
-                                  ? "indeterminate"
-                                  : "determinate"
-                                }
+                            ? "indeterminate"
+                            : "determinate"
+                          }
                         color={ isWritingSubmitted
                                 ? "primary"
                                 : "secondary"
-                              }
-                        value={ isWritingSubmitted
+                                }
+                        percentComplete={ isWritingSubmitted
                                 ? null
-                                : (writingTimeLeft/totalWritingTime) * 100
-                              }
+                                : (writingTimeLeft/totalWritingTime)
+                                }
+                        text={ isWritingSubmitted
+                                ? "waiting for other players"
+                                : writingTimeLeft ? writingTimeLeft  + " left to write" : "writing"
+                                }
                     />
                     <TextField
                         disabled

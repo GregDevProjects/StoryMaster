@@ -1,12 +1,10 @@
 import React from "react";
 import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-//https://material.io/design/components/progress-indicators.html#linear-progress-indicators
-import LinearProgress from '@material-ui/core/LinearProgress';
+import StatusLoader from '../components/StatusLoader';
 
 import { connect, onConnection, submitName } from '../socketApi'
 
@@ -44,30 +42,13 @@ export default class NameScreen extends React.Component {
     render() {
         const  isLoading  = this.state.isLoading;
         const  inputValidationError  = this.state.inputValidationError;
-        console.log(this.state.showScore)
         return (
             <React.Fragment>
                 <Fade in={isLoading}>
                 <div> 
-                    <Grid
-                        container
-                        justify="center"
-                        alignItems="center"
-                    >
-                        <Typography
-                            style={{
-                                display: "inline-block",
-                                marginLeft: "10px",
-                                position: "relative",
-                                fontSize: "20px",
-                                bottom: "3px",
-                                textAlign: "center"
-                            }}
-                        >
-                            connecting
-                        </Typography>
-                    </Grid>
-                    <LinearProgress />
+                    <StatusLoader
+                        text="connecting"
+                    />
                 </div>
                 </Fade>
                 <Fade in={!isLoading}>

@@ -1,15 +1,13 @@
 import React from "react";
 import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
-import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
-//https://material.io/design/components/progress-indicators.html#linear-progress-indicators
-import LinearProgress from '@material-ui/core/LinearProgress';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import { submitVote, onVotingTimerTick, onRoundResults, unsubscribeListener } from '../socketApi'
 import StoryDrawer from '../components/StoryDrawer'
 import ScoreDrawer from '../components/ScoreDrawer'
+
+import StatusLoader from '../components/StatusLoader'
 
 export default class VotingScreen extends React.Component {
 
@@ -58,42 +56,24 @@ export default class VotingScreen extends React.Component {
 
         return (
             <React.Fragment>
-                    <Grid
-                        container
-                        justify="center"
-                        alignItems="center"
-                    >
-                        <Typography
-                            style={{
-                                display: "inline-block",
-                                marginLeft: "10px",
-                                position: "relative",
-                                fontSize: "20px",
-                                bottom: "3px",
-                                textAlign: "center"
-                            }}
-                        >
-                            { isVoteSubmitted
-                              ? "waiting for other players"
-                              : votingTimeLeft ? votingTimeLeft + " left to vote" : "voting"
-                            }
-                        </Typography>
-                    </Grid>
-                    <LinearProgress 
+                    <StatusLoader
                         variant={ isVoteSubmitted
-                                  ? "indeterminate"
-                                  : "determinate"
-                                }
+                            ? "indeterminate"
+                            : "determinate"
+                          }
                         color={ isVoteSubmitted
                                 ? "primary"
                                 : "secondary"
-                              }
-                        value={ isVoteSubmitted
+                                }
+                        percentComplete={ isVoteSubmitted
                                 ? null
-                                : (votingTimeLeft/totalVotingTime) * 100
-                              }
+                                : (votingTimeLeft/totalVotingTime)
+                                }
+                        text={ isVoteSubmitted
+                            ? "waiting for other players"
+                            : votingTimeLeft ? votingTimeLeft + " left to vote" : "voting"
+                          }
                     />
-
                     <Fade 
                         in={!isVoteSubmitted}
                     >

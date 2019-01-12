@@ -1,14 +1,12 @@
 import React from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import DeterminateStatusLoader from '../components/DeterminateStatusLoader'
+import StatusLoader from '../components/StatusLoader'
 import { onNextGameStartTick, unsubscribeListener } from '../socketApi'
 
 export default class SplashScreen extends React.Component {
     constructor(props) {
         super(props);
-        // const results = props.props.results;
-        console.log(props);
         this.winnerName = props.props.winner.name;
         this.story = props.props.story;
         this.votes = props.props.winner.score;
@@ -34,8 +32,9 @@ export default class SplashScreen extends React.Component {
 
         return (
             <React.Fragment>
-                <DeterminateStatusLoader
-                    text={displayingInfoTimeLeft + " next story will start soon"}
+                <StatusLoader
+                    text={(displayingInfoTimeLeft ? displayingInfoTimeLeft : "")  + " next story will start soon"}
+                    variant="determinate"
                     percentComplete={displayingInfoTimeLeft/totalDisplayInfoTime}
                 />
                 <Grid

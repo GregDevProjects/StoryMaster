@@ -34,7 +34,6 @@ export function roundStart(callBack) {
 //gives the story so far and number of rounds won by each player
 export function onStoryResultUpdate(callBack) {
     socket.on('results', function(msg) {
-        console.log('called res')
         callBack(msg.story, msg.score);
     });
 }

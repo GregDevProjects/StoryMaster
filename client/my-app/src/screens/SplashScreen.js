@@ -4,15 +4,11 @@ import Button from '@material-ui/core/Button';
 import FabIconButton from '../components/FabIconButton'
 import Typography from '@material-ui/core/Typography';
 
-
-// import './index.css';
-
 export default class SplashScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {quote : null}
-        this.displayRandomQuote();
-        
+        this.displayRandomQuote();     
     }
 
     displayRandomQuote() {
