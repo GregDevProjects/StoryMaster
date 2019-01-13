@@ -26,8 +26,8 @@ export default class RoundResults extends React.Component {
                 totalDisplayInfoTime: totalSeconds,
             })
         })
-        roundStart(()=>{
-            this.props.changeScreen('WritingScreen', {});
+        roundStart((roundsLeft)=>{
+            this.props.changeScreen('WritingScreen', {roundsLeft: roundsLeft});
         })
     }
 

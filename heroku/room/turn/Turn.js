@@ -17,7 +17,7 @@ const TurnStatus = {
 const SECONDS_TO_WRITE = 5;
 const SECONDS_TO_VOTE = 5;
 const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
-const SECONDS_TO_SHOW_GAME_OVER = 10;
+const SECONDS_TO_SHOW_GAME_OVER = 5;
 const ROUNDS_PER_GAME = 3
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
@@ -34,6 +34,7 @@ function Turn(roomId, usersInRoom) {
     this._story = '';
     this._roundWinners = []; 
     this._timerBroadcaster = new timerBroadcaster(roomId);
+    this._roundsLeft;
 
     //for when all users leave a room 
     //this will only be called by the only room left, otherwise the room will be destroyed when all users leave
@@ -82,13 +83,13 @@ function Turn(roomId, usersInRoom) {
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
         for(let i = 0; i < ROUNDS_PER_GAME; i++) {
+            this._roundsLeft = ROUNDS_PER_GAME - i;
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
-            broadcastToRoomId(roomId, 'roundStart');
+            broadcastToRoomId(roomId, 'roundStart', {roundsLeft: ROUNDS_PER_GAME - i});
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-            console.log(this._roundWinners)
             this._broadcastGameScoresAndStory();
             await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
         }
@@ -108,6 +109,7 @@ function Turn(roomId, usersInRoom) {
     }
 
     this._broadcastGameScoresAndStory = () => {
+        console.log('ROUNDS ' + this._roundsLeft);
         broadcastToRoomId(
             roomId,
             'results',

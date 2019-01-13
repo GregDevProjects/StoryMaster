@@ -4,11 +4,10 @@ import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from '../socketApi'
-import StoryDrawer from '../components/StoryDrawer'
-import ScoreDrawer from '../components/ScoreDrawer'
-
-import StatusLoader from '../components/StatusLoader'
+import { onWritingTimerTick, submitWriting, onVotingStart, unsubscribeListener } from '../socketApi';
+import StoryDrawer from '../components/StoryDrawer';
+import ScoreDrawer from '../components/ScoreDrawer';
+import StatusLoader from '../components/StatusLoader';
 
 const TEXT_INPUT_STYLE = {width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"40px"};
 
@@ -23,6 +22,9 @@ export default class WritingScreen extends React.Component {
         };
         this.story = props.story;
         this.scores = props.scores;
+        if (props.props && props.props.roundsLeft) {
+            this.roundsLeft = props.props.roundsLeft;
+        }
     }
 
     componentWillMount() {
@@ -60,6 +62,15 @@ export default class WritingScreen extends React.Component {
         submitWriting(this.state.writing);
     }
 
+    getWritingLabel() {
+        if (!this.roundsLeft) {
+            return "How should the story start?";
+        }
+        return this.roundsLeft === 1
+            ? "Last round, finish the story!"
+            : this.roundsLeft + ' rounds left';
+    }
+
     render() {
         const writingTimeLeft = this.state.writingTimeLeft;
         const totalWritingTime = this.state.totalWritingTime;
@@ -79,7 +90,7 @@ export default class WritingScreen extends React.Component {
                                 ? null
                                 : (writingTimeLeft/totalWritingTime)
                                 }
-                        text={ isWritingSubmitted
+                        text={  isWritingSubmitted
                                 ? "waiting for other players"
                                 : writingTimeLeft ? writingTimeLeft  + " left to write" : "writing"
                                 }
@@ -99,7 +110,7 @@ export default class WritingScreen extends React.Component {
                     >
                         <div>
                             <TextField
-                                label="What comes next?"
+                                label={this.getWritingLabel()}
                                 margin="normal"
                                 variant="outlined"
                                 style={ TEXT_INPUT_STYLE }
@@ -155,7 +166,6 @@ export default class WritingScreen extends React.Component {
                     close={() => { this.setState({showScore: false})}}
                     scores={this.scores}
                 />
-
             </React.Fragment>
         );
     }

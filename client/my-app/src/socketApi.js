@@ -26,8 +26,8 @@ export function onGameOver(callBack) {
 }
 
 export function roundStart(callBack) {
-    socket.on('roundStart', function() {
-        callBack();
+    socket.on('roundStart', function(msg) {
+        callBack(msg.roundsLeft);
     });
 }
 
