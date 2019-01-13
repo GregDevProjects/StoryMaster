@@ -1,15 +1,11 @@
 -------Architecture-------
+move listeners from the api that involve screen changes to index.js
 have an option to force a resolution on the game (for newgrounds)
     - ??? x 820px
 /-------Architecture-------
 
 -------User Stories-------
-
 As a user, I want a way to keep track of the rounds left in the game
-
-As a user, I want to be informed when the game can't continue
-    -server error
-    -too many players leave
 
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
@@ -23,6 +19,7 @@ Give more status updates when waiting for a game to start
 /-------User Stories-------
 
 -------Bugs-------
+    - badge overlaps FAB
     - clear writing on game over
     - width of score drawer needs to be able to handle the max characters for the name 
     - story drawer doesn't update until the round results are over

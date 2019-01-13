@@ -1,7 +1,7 @@
 import React from "react";
 import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
-import { onWaitingForPlayersToBeginGame, onGameStart, onWaitingForPlayersToContinueGame, onWritingStart, unsubscribeListener } from '../socketApi'
+import { onWaitingForPlayersToBeginGame, onGameStart, onWritingStart, unsubscribeListener } from '../socketApi'
 import StatusLoader from '../components/StatusLoader'
 
 const LOOKING_FOR_GAME = "looking for a game";
@@ -17,6 +17,10 @@ export default class FindingGameScreen extends React.Component {
             isLoading: true,
             loadingMessage: LOOKING_FOR_GAME
         };
+
+        if (props.props && props.props.storyWillContinue) {
+            this.storyWillContinue = props.props.storyWillContinue;
+        }
     }
 
     componentDidMount() {
@@ -30,19 +34,19 @@ export default class FindingGameScreen extends React.Component {
                 loadingMessage: GAME_STARTING
             })      
         });
-        onWaitingForPlayersToContinueGame(() => {
-            this.setState({
-                loadingMessage : WAITING_FOR_GAME_CONTINUE
-            })
-        });
         onWritingStart(() => {
             this.props.changeScreen('WritingScreen'); 
         })
+
+        if (this.storyWillContinue) {
+            this.setState({loadingMessage: WAITING_FOR_GAME_CONTINUE});
+        }
     }
 
     componentWillUnmount() {
         unsubscribeListener('waiting');
         unsubscribeListener('writing');
+        // unsubscribeListener('error');
     }
 
     render() {

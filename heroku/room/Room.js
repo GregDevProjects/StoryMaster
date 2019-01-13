@@ -82,10 +82,11 @@ function Room(io) {
         this._broadcastWaitMessage(newUser);
     }
     this._broadcastWaitMessage = function(newUser) {
-        const message = this._turns.isPaused ? 
-            GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE : 
-            GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE;
-        broadcastToRoomId(newUser.socketId, 'waiting', message);
+        if (this._turns.isPaused) {
+            broadcastToRoomId(newUser.socketId, 'error', GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE);
+            return;
+        }
+        broadcastToRoomId(newUser.socketId, 'waiting', GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE);
     }
 
     this._startOrResumeTurns = function(newUser) {
@@ -100,6 +101,7 @@ function Room(io) {
         if (this._users.length <= MIN_USERS_IN_ROOM) {
             //the minimum users required to play was just met, restart round  
             broadcastToRoomId(this.id, 'waiting', GAME_START_MESSAGE);
+            
             this._users.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
             this._turns.resumeTurns();
             return;
@@ -110,6 +112,7 @@ function Room(io) {
     }
     this.onUserDisconnect = async(socket) => {
         this.removeUser(socket.id);
+        this._turns.removeUserFromRoundWinners(socket.id);
         const usersInRoom = await this._getClientCount();
         if (usersInRoom >= MIN_USERS_IN_ROOM) {
             return;
@@ -122,7 +125,7 @@ function Room(io) {
         this._turns.pauseTurns();
         broadcastToRoomId(
             this.id,
-            'waiting',
+            'error',
             GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE
         );
 

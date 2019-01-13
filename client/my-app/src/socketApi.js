@@ -143,11 +143,9 @@ export function submitName(name) {
 }
 
 export function onWaitingForPlayersToContinueGame(callBack) {
-    socket.on('waiting', function(msg) {
+    socket.on('error', function(msg) {
         if (msg === GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE) {
             callBack();
         }
-    });    
+    });
 }
-
-//export { waiting, connect, onConnection, submitName, onWaitingForPlayersToBeginGame };

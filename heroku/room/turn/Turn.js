@@ -14,8 +14,8 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 15;
-const SECONDS_TO_VOTE = 2;
+const SECONDS_TO_WRITE = 5;
+const SECONDS_TO_VOTE = 5;
 const SECONDS_TO_SHOW_ROUND_RESULTS = 2;
 const SECONDS_TO_SHOW_GAME_OVER = 10;
 const ROUNDS_PER_GAME = 3
@@ -62,6 +62,12 @@ function Turn(roomId, usersInRoom) {
         return winArray;
     }
 
+    this.removeUserFromRoundWinners = (sockedId) => {
+        _.remove(this._roundWinners, function(n) {
+            return n.socketId  == sockedId;
+        });
+    }
+
     //returns { name: 'a', score: 2 }
     this._getGameWinner = () => {
         const countby = _.countBy(this._roundWinners, 'socketId');
@@ -82,15 +88,8 @@ function Turn(roomId, usersInRoom) {
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-            //console.log(this.getRoundWinners())
-            broadcastToRoomId(
-                roomId, 
-                'results', 
-                {    
-                    story:this._story, 
-                    score: this.getRoundWinners()
-                }
-            );
+            console.log(this._roundWinners)
+            this._broadcastGameScoresAndStory();
             await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
         }
 
@@ -106,6 +105,17 @@ function Turn(roomId, usersInRoom) {
         await this._timerBroadcaster.start(TurnStatus.GAME_OVER, SECONDS_TO_SHOW_GAME_OVER);
         this.clearGame();
         this.startTurns();
+    }
+
+    this._broadcastGameScoresAndStory = () => {
+        broadcastToRoomId(
+            roomId,
+            'results',
+            {
+                story:this._story,
+                score: this.getRoundWinners()
+            }
+        );
     }
 
     this.clearGame = () => {
@@ -188,6 +198,7 @@ function Turn(roomId, usersInRoom) {
     //when restarting after a player leaves and another joins 
     this.resumeTurns = function() {
         this._timerBroadcaster.stopTimerWithoutResolving();
+        this._broadcastGameScoresAndStory();
         this.isPaused = false;
         //TODO: add method for resuming turns
         this.startTurns();

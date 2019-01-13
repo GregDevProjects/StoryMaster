@@ -8,7 +8,7 @@ import WritingScreen from './screens/WritingScreen';
 import VotingScreen from './screens/VotingScreen';
 import RoundResultsScreen from './screens/RoundResultsScreen';
 import GameOverScreen from './screens/GameOverScreen';
-import { onStoryResultUpdate, onGameOver } from './socketApi';
+import { onStoryResultUpdate, onGameOver, onWaitingForPlayersToContinueGame } from './socketApi';
 
 const PAGES = {
     'SplashScreen' : SplashScreen,
@@ -38,13 +38,21 @@ export default class App extends React.Component {
             console.log('story update received');
             this.scores = score;
             this.story = story;
-        })
+        });
         onGameOver((winner, story) => {
             this.changeScreen(
                 'GameOverScreen', 
                 {
                     winner: winner, 
                     story: story
+                }
+            )
+        });
+        onWaitingForPlayersToContinueGame(() => {
+            this.changeScreen(
+                'FindingGameScreen',
+                {
+                    storyWillContinue: true
                 }
             )
         })
