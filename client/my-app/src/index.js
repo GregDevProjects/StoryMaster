@@ -35,7 +35,6 @@ export default class App extends React.Component {
             return;
         }
         onStoryResultUpdate((story, score) => {
-            console.log('story update received');
             this.scores = score;
             this.story = story;
         });
@@ -47,6 +46,8 @@ export default class App extends React.Component {
                     story: story
                 }
             )
+            this.story = "";
+            this.scores=[];
         });
         onWaitingForPlayersToContinueGame(() => {
             this.changeScreen(
