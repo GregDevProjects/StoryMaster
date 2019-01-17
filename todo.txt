@@ -1,3 +1,8 @@
+-------TODO-------
+write tests for turns 
+
+/------TODO-------
+
 -------Architecture-------
 move listeners from the api that involve screen changes to index.js
 have an option to force a resolution on the game (for newgrounds)
@@ -11,7 +16,12 @@ As a user, I want to be able to learn how to play the game
     -opens modal on click?
 
 Give more status updates when waiting for a game to start 
-    - show how many more players needed  
+    - show how many more players needed
+    - show the story so far if joining a game in progress
+
+As a user, I want to know the people that are currently in the game
+    -show all current users in score tab?
+        -return all users on results, just give 0 if no score
 
 /-------User Stories-------
 
@@ -26,12 +36,3 @@ Give more status updates when waiting for a game to start
     - can't play if on the same ip 
     - captcha
 /-------Security-------
-
--------Tests-------
-    - when timer runs out
-        - placeholder writing 
-        - random votes 
-    - joining a game in progress 
-        - continues round 
-        - restarts round
-/------Tests-------

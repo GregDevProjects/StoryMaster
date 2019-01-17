@@ -209,25 +209,17 @@ describe('Room managing clients', function() {
     });
 });
 
-function joinRoomWithMinPlayersSubmitWritingsImmediately() {
-    for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
-        let c = client('http://localhost:4000/').on('waiting', (msg) => {
-            if (msg === room.GAME_START_MESSAGE) {
-                c.emit(  
-                    'msg',
-                    'this is a writing'
-                )
-            }
-        });
-    }
-}
-
 describe('Turn broadcasting to clients', function() {
     //same user can't vote or write twice 
-    //displays the right round winner based on votes <-
-    //what happens if a player leaves?
-
-
+    //user can only vote during voting period 
+    //user can only write during writing period
+    //returns the correct round results 
+    //returns the correct score 
+    //placeholder writing when time runs out 
+    //placeholder votes when time runs out
+    //joining a game in progress should broadcast the story so far and tell them to wait
+    //joining a game waiting for players should restart the round
+    //test the timer??
 
     it('broadcasts vote status after receiving all writings', function(done) {
         let broadcastedClients = 0;
@@ -329,7 +321,7 @@ describe('Turn broadcasting to clients', function() {
         }, 100)
     });
   
-    it('broadcasts the correct round winner', function(done) {
+    it('broadcasts the story of the round winner', function(done) {
         let roundResults = "";
         for (let i = 0; i < room.MIN_USERS_IN_ROOM; i++) {
             let c = client('http://localhost:4000/').on('waiting', (msg) => {
@@ -385,3 +377,4 @@ describe('Turn broadcasting to clients', function() {
     });
 
 });
+

@@ -11,6 +11,8 @@ const VOTING_TIMER_STATUS = 2;
 const DISPLAYING_INFO_TIMER_STATUS = 3;
 const NEXT_GAME_TIMER_STATUS = 4;
 
+//TODO: implement waitingRoundFinish
+
 export function onNextGameStartTick(callBack) {
     socket.on('turnTimer', function(msg){
         if(msg.type === NEXT_GAME_TIMER_STATUS) {
