@@ -185,14 +185,17 @@ describe('Room managing clients', function() {
 
         for (let i = 0; i < room.MIN_USERS_IN_ROOM - 1; i++) {
             const c = client('http://localhost:4000/').on('waiting', (msg) => {
-                if (msg === room.GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE) { 
-                    broadcastedClients++;
-                }
                 if(msg == 'connected') {
                     c.emit(  
                         'name',
                         i   
                     );
+                }
+            });
+
+            c.on('error', (msg) => {
+                if (msg === room.GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE) { 
+                    broadcastedClients++;
                 }
             });
         }
