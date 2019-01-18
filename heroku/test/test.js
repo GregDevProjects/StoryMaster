@@ -209,8 +209,41 @@ describe('Room managing clients', function() {
     });
 });
 
+function startGame(numberOfUsers) {
+    const clients = [];
+    for (let i = 0; i < numberOfUsers; i++) {
+        let c = client('http://localhost:4000/')    
+        c.on('waiting', (msg) => {
+            if(msg == 'connected') {
+                c.emit(  
+                    'name',
+                    i   
+                );
+            }
+    
+        });
+
+        clients.push(c);
+    }
+    return clients;
+}
+
+function submitWritingForAllClients(clients) {
+    clients.forEach((c) => {
+        c.on('waiting', (msg) => {
+            if (msg === room.GAME_START_MESSAGE) {
+                c.emit(  
+                    'msg',
+                    'this is a writing'
+                )
+            }
+        }); 
+
+    })
+    return clients;
+}
+
 describe('Turn broadcasting to clients', function() {
-    //same user can't vote or write twice 
     //user can only vote during voting period 
     //user can only write during writing period
     //returns the correct round results 
@@ -220,6 +253,80 @@ describe('Turn broadcasting to clients', function() {
     //joining a game in progress should broadcast the story so far and tell them to wait
     //joining a game waiting for players should restart the round
     //test the timer??
+
+    it('stops a user from submitting two writings in a round', function(done) {
+        const clients = startGame(room.MIN_USERS_IN_ROOM);
+        //this will need to change if the min users > 3
+        const votesAllowed = 6;
+        let writeCount = 0;
+        let gotFirstWriting = true;
+
+        clients.forEach((c) => {
+            c.on('waiting', (msg) => {
+                if (msg === room.GAME_START_MESSAGE) {
+                    c.emit(  
+                        'msg',
+                        '1'
+                    )
+                    c.emit(  
+                        'msg',
+                        '2'
+                    )
+                }
+            }); 
+    
+        })
+
+        clients.forEach((c) => {
+            c.on('vote', function(voteChoices){
+                //console.log(voteChoices)
+                voteChoices.forEach((choice) => {
+                    writeCount++;
+                    gotFirstWriting = choice.message == '1'; 
+                })  
+            });
+        })
+
+        setTimeout(() => {
+            assert.equal(
+                (writeCount == votesAllowed) && gotFirstWriting, 
+                true
+            );
+            done();
+        }, 100)
+    });
+
+    it('stops a user from voting twice in a round', function(done) {
+        const clients = startGame(room.MIN_USERS_IN_ROOM);
+        let voteCount = 0;
+        
+        submitWritingForAllClients(clients);
+
+        clients.forEach((c) => {
+            c.on('vote', function(voteChoices){           
+                for(let i =0; i<3; i++){
+                    c.emit(
+                        'vote',
+                        voteChoices[0].user
+                    )
+                }
+            });
+        })
+
+        clients[0].on('roundOver', function(roundResults){
+            roundResults.results.forEach((res) => {
+                voteCount+=res.votes;
+            }) 
+        })
+
+        setTimeout(() => {
+            assert.equal(
+                voteCount, 
+                room.MIN_USERS_IN_ROOM
+            );
+            done();
+        }, 100)
+    });
 
     it('broadcasts vote status after receiving all writings', function(done) {
         let broadcastedClients = 0;
