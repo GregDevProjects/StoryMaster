@@ -2,7 +2,12 @@ var app = require('express')();
 require('http-shutdown').extend();
 var http = require('http').Server(app).withShutdown();
 var io = require('socket.io')(http);
-var port = 4000;
+
+let port = process.env.PORT;
+if (port == null || port == "") {
+  port = 8000;
+}
+app.listen(port);
 
 module.exports = {
     listen : listen,
