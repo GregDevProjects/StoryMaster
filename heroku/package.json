@@ -16,5 +16,8 @@
     "scripts": {
         "start": "nodemon node index.js",
         "test": "mocha"
+    },
+    "engines": {
+        "node": "10.3.0"
     }
 }
