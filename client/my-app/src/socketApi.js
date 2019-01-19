@@ -1,7 +1,7 @@
 //https://medium.com/dailyjs/combining-react-with-socket-io-for-real-time-goodness-d26168429a34
 import openSocket from 'socket.io-client';
 let socket = '';
-const host = 'http://localhost:5000';
+const host = 'https://glacial-escarpment-78035.herokuapp.com/';
 
 const GAME_START_MESSAGE = "GS";
 const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'WTS';
