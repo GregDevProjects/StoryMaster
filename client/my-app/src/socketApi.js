@@ -1,7 +1,7 @@
 //https://medium.com/dailyjs/combining-react-with-socket-io-for-real-time-goodness-d26168429a34
 import openSocket from 'socket.io-client';
 let socket = '';
-const host = 'http://localhost:4000';
+const host = 'http://localhost:5000';
 
 const GAME_START_MESSAGE = "GS";
 const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'WTS';
