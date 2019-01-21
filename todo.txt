@@ -1,5 +1,9 @@
 -------TODO-------
 write tests for turns 
+
+Give more status updates when waiting for a game to start 
+    - show how many more players needed
+    - show the story so far if joining a game in progress (display more than finding game)
 /------TODO-------
 
 -------Architecture-------
@@ -8,17 +12,13 @@ have an option to force a resolution on the game (for newgrounds)
     - ??? x 820px
 find a way to moniter memory on server
 use heroku config variables for stuff
-    -timer length
+    -timer length 
 /-------Architecture-------
 
 -------User Stories-------
 As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
-
-Give more status updates when waiting for a game to start 
-    - show how many more players needed
-    - show the story so far if joining a game in progress (display more than finding game)
 
 As a user, I want to know the people that are currently in the game
     -show all current users in score tab?

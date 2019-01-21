@@ -25,7 +25,7 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-            currentPage: PAGES['SplashScreen'] 
+            currentPage: PAGES['NameScreen'] 
         };
         this.story = "";
     }
