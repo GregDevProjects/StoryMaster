@@ -79,15 +79,16 @@ function Room(io) {
             this._startOrResumeTurns(newUser);
             return;
         } 
-        this._broadcastWaitMessage(newUser);
-    }
-    this._broadcastWaitMessage = function(newUser) {
         if (this._turns.isPaused) {
             broadcastToRoomId(newUser.socketId, 'error', GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE);
+            this._broadcastPlayersNeededToStart();
             return;
         }
         broadcastToRoomId(newUser.socketId, 'waiting', GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE);
+        this._broadcastPlayersNeededToStart();
+
     }
+
 
     this._startOrResumeTurns = function(newUser) {
         
@@ -119,6 +120,7 @@ function Room(io) {
         }
 
         if (usersInRoom <= 0) {
+            //no users left, restart the game
             this._turns.reset();
             return;
         }
@@ -128,7 +130,7 @@ function Room(io) {
             'error',
             GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE
         );
-
+        this._broadcastPlayersNeededToStart();
     }
     this.removeUser = (socketId) => {
         _.remove(this._users, function(aUser) {
@@ -141,5 +143,13 @@ function Room(io) {
     }
     this._isEnoughUsersToStart = async () => {
         return await this._getClientCount() >= MIN_USERS_IN_ROOM;
+    }
+    this._broadcastPlayersNeededToStart = () => {
+        console.log(MIN_USERS_IN_ROOM - this._users.length);
+        broadcastToRoomId(
+            this.id,
+            'playersNeeded',
+            MIN_USERS_IN_ROOM - this._users.length
+        );
     }
 }

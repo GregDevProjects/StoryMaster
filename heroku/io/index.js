@@ -5,10 +5,11 @@ var io = require('socket.io')(http);
 
 let port = process.env.PORT;
 if (port == null || port == "") {
-  port = 7000;
-}
+  port = 4000;
+} 
+
 console.log('PORT', port)
-app.listen(port);
+app.listen(7000);
 
 module.exports = {
     listen : listen,

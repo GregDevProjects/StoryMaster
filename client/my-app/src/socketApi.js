@@ -1,8 +1,8 @@
 //https://medium.com/dailyjs/combining-react-with-socket-io-for-real-time-goodness-d26168429a34
 import openSocket from 'socket.io-client';
 let socket = '';
-const host = 'http://localhost:4000';
-
+//const host = 'https://glacial-escarpment-78035.herokuapp.com/';
+const host = 'localhost:4000';
 const GAME_START_MESSAGE = "GS";
 const GAME_NEEDS_MORE_PLAYERS_TO_START_MESSAGE = 'WTS';
 const GAME_NEEDS_MORE_PLAYERS_TO_RESUME_MESSAGE = 'WTC';
@@ -12,6 +12,12 @@ const DISPLAYING_INFO_TIMER_STATUS = 3;
 const NEXT_GAME_TIMER_STATUS = 4;
 
 //TODO: implement waitingRoundFinish
+
+export function onPlayersNeededToStartGame(callBack) {
+    socket.on('playersNeeded', function(amountNeeded){
+        callBack(amountNeeded);
+    });
+}
 
 export function onNextGameStartTick(callBack) {
     socket.on('turnTimer', function(msg){

@@ -294,6 +294,44 @@ describe('Turn broadcasting to clients', function() {
             );
             done();
         }, 100)
+    });  
+
+    it('stops a user from changing thier writing in the voting phase', function(done) {
+        const clients = startGame(room.MIN_USERS_IN_ROOM);
+        //this will need to change if the min users > 3
+        const votesAllowed = 6;
+        let writeCount = 0;
+        let allWritingsCorrect = true;
+
+        submitWritingForAllClients(clients);
+
+        clients.forEach((c) => {
+            c.on('vote', function(voteChoices){
+                //try to submit another writing at the voting phase
+                c.emit(  
+                    'msg',
+                    '1'
+                )
+                c.emit(
+                    'vote',
+                    voteChoices[0].user
+                )
+            });
+            c.on('roundOver', function(roundResults){
+                roundResults.results.forEach(function(result){
+                    if (result.message != 'this is a writing') {
+                        allWritingsCorrect = false;
+                    }
+                })
+            })
+        })
+        setTimeout(() => {
+            assert.equal(
+                allWritingsCorrect, 
+                true
+            );
+            done();
+        }, 100)
     });
 
     it('stops a user from voting twice in a round', function(done) {

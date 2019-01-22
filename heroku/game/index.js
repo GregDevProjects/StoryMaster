@@ -1,9 +1,11 @@
 const Lobby = require('../lobby/Lobby').Lobby; 
 const ioHandler = require('../io/index');
+const os = require('os');
 
 module.exports = {
     startIoAndLobby : startIoAndLobby,
-    startIntervalDebugging : startIntervalDebugging
+    startIntervalDebugging : startIntervalDebugging,
+    startCpuUsageLogs : startCpuUsageLogs
 }
 
 function startIoAndLobby(){
@@ -27,5 +29,14 @@ function startIntervalDebugging(lobby){
                 );
             })
         })
+    } , 2000)
+}
+
+function startCpuUsageLogs() {
+    setInterval( function() {
+        // console.log(os.cpus());
+        // console.log(os.totalmem());
+        // console.log(os.freemem());
+        console.log(os.freemem()/os.totalmem());
     } , 2000)
 }
