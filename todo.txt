@@ -2,7 +2,6 @@
 write tests for turns 
 
 Give more status updates when waiting for a game to start 
-    - show how many more players needed
     - show the story so far if joining a game in progress (display more than finding game)
 /------TODO-------
 
