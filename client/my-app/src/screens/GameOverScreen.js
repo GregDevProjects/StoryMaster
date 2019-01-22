@@ -2,7 +2,7 @@ import React from "react";
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import StatusLoader from '../components/StatusLoader'
-import { onNextGameStartTick, unsubscribeListener } from '../socketApi'
+import { onNextGameStartTick, unsubscribeListener, roundStart } from '../socketApi'
 
 export default class SplashScreen extends React.Component {
     constructor(props) {
@@ -19,6 +19,9 @@ export default class SplashScreen extends React.Component {
                 displayingInfoTimeLeft: countDownValue,
                 totalDisplayInfoTime: totalSeconds,
             })
+        });
+        roundStart((roundsLeft, isFirstRound)=>{
+            this.props.changeScreen('WritingScreen', {roundsLeft: roundsLeft, isFirstRound: isFirstRound});
         })
     }
 

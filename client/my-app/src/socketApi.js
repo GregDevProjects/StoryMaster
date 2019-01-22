@@ -13,6 +13,12 @@ const NEXT_GAME_TIMER_STATUS = 4;
 
 //TODO: implement waitingRoundFinish
 
+export function onJoinedGameInProgress(callBack) {
+    socket.on('waitingRoundFinish', function(story){
+        callBack(story);
+    });
+}
+
 export function onPlayersNeededToStartGame(callBack) {
     socket.on('playersNeeded', function(amountNeeded){
         callBack(amountNeeded);
@@ -35,7 +41,7 @@ export function onGameOver(callBack) {
 
 export function roundStart(callBack) {
     socket.on('roundStart', function(msg) {
-        callBack(msg.roundsLeft);
+        callBack(msg.roundsLeft, msg.isFirstRound);
     });
 }
 

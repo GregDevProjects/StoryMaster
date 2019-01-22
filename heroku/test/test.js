@@ -244,7 +244,6 @@ function submitWritingForAllClients(clients) {
 }
 
 describe('Turn broadcasting to clients', function() {
-    //user can only vote during voting period 
     //user can only write during writing period
     //returns the correct round results 
     //returns the correct score 
@@ -253,6 +252,7 @@ describe('Turn broadcasting to clients', function() {
     //joining a game in progress should broadcast the story so far and tell them to wait
     //joining a game waiting for players should restart the round
     //test the timer??
+    //restarts after a game
 
     it('stops a user from submitting two writings in a round', function(done) {
         const clients = startGame(room.MIN_USERS_IN_ROOM);

@@ -1,13 +1,17 @@
 import React from "react";
 import FabIconButton from '../components/FabIconButton'
 import Fade from '@material-ui/core/Fade';
-import { onWaitingForPlayersToBeginGame, onGameStart, onWritingStart, unsubscribeListener, onPlayersNeededToStartGame } from '../socketApi'
+import { onWaitingForPlayersToBeginGame, onGameStart, roundStart, unsubscribeListener, onPlayersNeededToStartGame, onJoinedGameInProgress } from '../socketApi'
 import StatusLoader from '../components/StatusLoader'
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardContent from '@material-ui/core/CardContent';
 
-const LOOKING_FOR_GAME = "looking for a game";
+const LOOKING_FOR_GAME = "looking for a story";
 const WAITING_FOR_GAME_START = "the story will begin after enough players join.";
 const WAITING_FOR_GAME_CONTINUE = "a player left, the story will continue after enough players join.";
-const GAME_STARTING = "game will begin shortly";
+const GAME_STARTING = "story will begin shortly";
+const GAME_IN_PROGRESS = "found a story, you will join after the round ends";
 
 export default class FindingGameScreen extends React.Component {
 
@@ -16,7 +20,8 @@ export default class FindingGameScreen extends React.Component {
         this.state = {
             isLoading: true,
             loadingMessage: LOOKING_FOR_GAME,
-            playersNeeded: false
+            playersNeeded: false,
+            story: false
         };
 
         if (props.props && props.props.storyWillContinue) {
@@ -35,11 +40,18 @@ export default class FindingGameScreen extends React.Component {
                 loadingMessage: GAME_STARTING
             })      
         });
-        onWritingStart(() => {
-            this.props.changeScreen('WritingScreen'); 
-        });
+        roundStart((roundsLeft, isFirstRound)=>{
+            this.props.changeScreen('WritingScreen', {roundsLeft: roundsLeft, isFirstRound: isFirstRound});
+        })
+
         onPlayersNeededToStartGame((amountNeeded) => {
             this.setState({playersNeeded: amountNeeded});
+        });
+        onJoinedGameInProgress((storySoFar) => {
+            this.setState({
+                loadingMessage: GAME_IN_PROGRESS,
+                story: storySoFar
+            })
         });
 
         if (this.storyWillContinue) {
@@ -51,6 +63,7 @@ export default class FindingGameScreen extends React.Component {
         unsubscribeListener('waiting');
         unsubscribeListener('writing');
         unsubscribeListener('playersNeeded');
+        unsubscribeListener('roundStart');
     }
 
     getProgressText() {
@@ -68,7 +81,7 @@ export default class FindingGameScreen extends React.Component {
 
     render() {
         const isLoading  = this.state.isLoading;
-
+        const story = this.state.story;
         return (
             <React.Fragment>
                 <Fade in={isLoading}>
@@ -83,6 +96,18 @@ export default class FindingGameScreen extends React.Component {
                     fontAwesomeIcon="fas fa-list-ol"
                     onClick={ ()=>{ alert('help') } }
                 />
+                <Fade in={story ? true : false}>
+                <Card
+                    style={{width: "calc(100% - 20px)", marginLeft: "10px", marginRight: "10px", marginTop:"20px"}}
+                >
+                    <CardHeader
+                        title="Story so far..."
+                    />
+                    <CardContent>
+                        {story}
+                    </CardContent>
+                </Card>
+                </Fade>
             </React.Fragment>
         );
     }

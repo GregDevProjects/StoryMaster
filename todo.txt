@@ -1,8 +1,6 @@
 -------TODO-------
 write tests for turns 
 
-Give more status updates when waiting for a game to start 
-    - show the story so far if joining a game in progress (display more than finding game)
 /------TODO-------
 
 -------Architecture-------
@@ -22,6 +20,9 @@ As a user, I want to be able to learn how to play the game
 As a user, I want to know the people that are currently in the game
     -show all current users in score tab?
         -return all users on results, just give 0 if no score
+
+As a user, I want to know when the server is down
+    - boot to name screen with message
 
 /-------User Stories-------
 

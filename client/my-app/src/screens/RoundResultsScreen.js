@@ -26,13 +26,14 @@ export default class RoundResults extends React.Component {
                 totalDisplayInfoTime: totalSeconds,
             })
         })
-        roundStart((roundsLeft)=>{
-            this.props.changeScreen('WritingScreen', {roundsLeft: roundsLeft});
+        roundStart((roundsLeft, isFirstRound)=>{
+            this.props.changeScreen('WritingScreen', {roundsLeft: roundsLeft, isFirstRound: isFirstRound});
         })
     }
 
     componentWillUnmount() {
         unsubscribeListener('turnTimer');
+        unsubscribeListener('roundStart');
     }
 
     render() {

@@ -14,11 +14,11 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 30;
-const SECONDS_TO_VOTE = 20;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 5;
-const SECONDS_TO_SHOW_GAME_OVER = 10;
-const ROUNDS_PER_GAME = 8
+const SECONDS_TO_WRITE = 1; //30
+const SECONDS_TO_VOTE = 1; //20
+const SECONDS_TO_SHOW_ROUND_RESULTS = 1; //5
+const SECONDS_TO_SHOW_GAME_OVER = 1; //10
+const ROUNDS_PER_GAME = 2;
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
 
@@ -85,7 +85,14 @@ function Turn(roomId, usersInRoom) {
         this.turnsHaveStarted = true;
         for(let i = 0; i < ROUNDS_PER_GAME; i++) {
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
-            broadcastToRoomId(roomId, 'roundStart', {roundsLeft: ROUNDS_PER_GAME - i});
+            broadcastToRoomId(
+                roomId,
+                'roundStart',
+                {
+                    roundsLeft: ROUNDS_PER_GAME - i,
+                    isFirstRound: ROUNDS_PER_GAME - i == ROUNDS_PER_GAME
+                }
+            );
             this.currentRound = new round.Round(1);
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);

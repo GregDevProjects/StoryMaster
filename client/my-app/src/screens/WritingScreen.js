@@ -24,6 +24,7 @@ export default class WritingScreen extends React.Component {
         this.scores = props.scores;
         if (props.props && props.props.roundsLeft) {
             this.roundsLeft = props.props.roundsLeft;
+            this.isFirstRound = props.props.isFirstRound;
         }
     }
 
@@ -63,7 +64,7 @@ export default class WritingScreen extends React.Component {
     }
 
     getWritingLabel() {
-        if (!this.roundsLeft) {
+        if (this.isFirstRound) {
             return "How should the story start?";
         }
         return this.roundsLeft === 1
