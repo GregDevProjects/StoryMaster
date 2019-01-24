@@ -1,6 +1,10 @@
 -------TODO-------
 write tests for turns 
 
+As a user, I want to know many people that are currently in the game
+    -update the results more often
+        -on user joining 
+        -on user leaving
 /------TODO-------
 
 -------Architecture-------
@@ -17,9 +21,7 @@ As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
 
-As a user, I want to know the people that are currently in the game
-    -show all current users in score tab?
-        -return all users on results, just give 0 if no score
+
 
 As a user, I want to know when the server is down
     - boot to name screen with message
@@ -29,7 +31,6 @@ As a user, I want to know when the server is down
 -------Bugs-------
     - badge overlaps FAB
     - width of score drawer needs to be able to handle the max characters for the name 
-    - story drawer doesn't update until the round results are over
 /-------Security-------
 
 -------Security-------

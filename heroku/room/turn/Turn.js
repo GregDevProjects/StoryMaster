@@ -14,11 +14,11 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 1; //30
-const SECONDS_TO_VOTE = 1; //20
-const SECONDS_TO_SHOW_ROUND_RESULTS = 1; //5
+const SECONDS_TO_WRITE = 5; //30
+const SECONDS_TO_VOTE = 5; //20
+const SECONDS_TO_SHOW_ROUND_RESULTS = 5; //5
 const SECONDS_TO_SHOW_GAME_OVER = 1; //10
-const ROUNDS_PER_GAME = 2;
+const ROUNDS_PER_GAME = 10;
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
 
@@ -53,14 +53,24 @@ function Turn(roomId, usersInRoom) {
         })
 
         let winArray = [];
-
+        
         for (var key in a) {
             const name = this._roundWinners.find(function(yo){
                 return yo.socketId == key;
-            }).name
+            }).name;
             const score = a[key];
-            winArray.push({name, score});
+            winArray.push({name, score, key});
         }
+        //add users that don't have scores
+        usersInRoom.forEach((aUser) => {
+            const match = _.find(winArray, function(o) { 
+              return o.key == aUser.socketId; 
+            });
+            if (!match) {
+              winArray.push({name: aUser.name, score: 0, key: aUser.socketId})
+            }
+        });
+
         return _.orderBy(winArray, 'score', 'desc');
     }
 
