@@ -3,6 +3,7 @@ import Drawer from '@material-ui/core/Drawer';
 import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
+import Divider from '@material-ui/core/Divider';
 
 const StyledDrawer = withStyles({
     paper: {
@@ -30,6 +31,14 @@ const StyledBadge = withStyles({
                 onClose={() => {close()}}
                 anchor="right"
             >
+                <Typography
+                    variant="h4"
+                    gutterBottom
+                    style={{textAlign: "center"}}
+                >
+                Writers
+                </Typography>
+                <Divider />
                 <div style={{height:"20px"}}></div>
                 <NamesWithScores scores={ scores } />
         

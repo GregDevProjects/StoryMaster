@@ -23,6 +23,7 @@ const StyledDrawer = withStyles({
                 <Typography
                     variant="h4"
                     gutterBottom
+                    style={{textAlign: "center"}}
                 >
                 Story
                 </Typography>

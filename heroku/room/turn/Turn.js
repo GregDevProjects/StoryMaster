@@ -41,12 +41,11 @@ function Turn(roomId, usersInRoom) {
         this.isPaused = false;
         this._timerBroadcaster.stopTimerWithoutResolving();
         this.clearGame();
-        //TODO: add logic to clear rounds here
     }
 
 
     //RETURNS: [{ name: 'c', score: 3 },{ name: 'z', score: 10 }, { name: 'c', score: 2 } ]
-    this.getRoundWinners = function() {
+    this._getRoundWinners = function() {
         //TODO: this is messy because _.countBy returns an object, need to find a better way to do this
         const a = _.countBy(this._roundWinners, function(o){
             return o.socketId
@@ -78,6 +77,7 @@ function Turn(roomId, usersInRoom) {
         _.remove(this._roundWinners, function(n) {
             return n.socketId  == sockedId;
         });
+        this.broadcastGameScoresAndStory(); 
     }
 
     //returns { name: 'a', score: 2 }
@@ -107,7 +107,7 @@ function Turn(roomId, usersInRoom) {
             const roundResults = await this._doARound();
             this._story += (' ' + roundResults.winner.message);
             this._roundWinners.push(roundResults.winner.user);
-            this._broadcastGameScoresAndStory();
+            this.broadcastGameScoresAndStory();
             await this._timerBroadcaster.start(TurnStatus.DISPLAYING_INFO, SECONDS_TO_SHOW_ROUND_RESULTS);
         }
 
@@ -125,13 +125,13 @@ function Turn(roomId, usersInRoom) {
         this.startTurns();
     }
 
-    this._broadcastGameScoresAndStory = () => {
+    this.broadcastGameScoresAndStory = () => {
         broadcastToRoomId(
             roomId,
             'results',
             {
                 story:this._story,
-                score: this.getRoundWinners()
+                score: this._getRoundWinners()
             }
         );
     }
@@ -216,7 +216,7 @@ function Turn(roomId, usersInRoom) {
     //when restarting after a player leaves and another joins 
     this.resumeTurns = function() {
         this._timerBroadcaster.stopTimerWithoutResolving();
-        this._broadcastGameScoresAndStory();
+        this.broadcastGameScoresAndStory();
         this.isPaused = false;
         //TODO: add method for resuming turns
         this.startTurns();

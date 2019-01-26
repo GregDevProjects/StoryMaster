@@ -37,10 +37,25 @@ function Room(io) {
             });       
         }) 
     }
-    this.join = async function (socket, userName) {
+    this.join = async function (socket, userName) {     
+        if (this._isUserInRoom(socket)) {
+            return;
+        }
         
-        this._addUserIfNew(socket, userName);
-        
+        this._onUserConnect(socket, userName);
+    }
+
+    this._isUserInRoom = (socket) => {
+        return _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
+    }
+
+    this._onUserConnect = (socket, userName) => {
+        socket.join(this.id);
+        const newUser = new user(socket.id, userName);
+        this._users.push(newUser);
+        this._broadcastWaitingStatusOrStartTurns(newUser);
+        this._turns.broadcastGameScoresAndStory();
+
         socket.on('msg', async (data) => {
             const userThatWrote = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
             if (!userThatWrote || !userThatWrote.isApprovedToPlayInTurns) {
@@ -63,17 +78,8 @@ function Room(io) {
                 await this._getClientCount()
             );
         });
-        
     }
-    this._addUserIfNew = (socket, userName) => {
-        const userIsAlreadyInRoom = _.find(this._users, function(aUser) { return aUser.socketId == socket.id; });
-        if (!userIsAlreadyInRoom) {
-            socket.join(this.id);
-            const newUser = new user(socket.id, userName);
-            this._users.push(newUser);
-            this._broadcastWaitingStatusOrStartTurns(newUser);
-        }
-    }
+
     this._broadcastWaitingStatusOrStartTurns = async function(newUser) {
         if (await this._isEnoughUsersToStart()) {
             this._startOrResumeTurns(newUser);
@@ -88,7 +94,6 @@ function Room(io) {
         this._broadcastPlayersNeededToStart();
 
     }
-
 
     this._startOrResumeTurns = function(newUser) {
         
@@ -111,6 +116,7 @@ function Room(io) {
         broadcastToRoomId(newUser.socketId, 'waitingRoundFinish', this._turns._story);
         newUser.isApprovedToPlayInTurns = false;
     }
+
     this.onUserDisconnect = async(socket) => {
         this.removeUser(socket.id);
         this._turns.removeUserFromRoundWinners(socket.id);
@@ -132,6 +138,7 @@ function Room(io) {
         );
         this._broadcastPlayersNeededToStart();
     }
+
     this.removeUser = (socketId) => {
         _.remove(this._users, function(aUser) {
             return aUser.socketId == socketId;
@@ -141,11 +148,12 @@ function Room(io) {
     this.canAnotherUserJoin = async () => {
         return await this._getClientCount() < MAX_USERS_IN_ROOM;
     }
+
     this._isEnoughUsersToStart = async () => {
         return await this._getClientCount() >= MIN_USERS_IN_ROOM;
     }
+
     this._broadcastPlayersNeededToStart = () => {
-        console.log(MIN_USERS_IN_ROOM - this._users.length);
         broadcastToRoomId(
             this.id,
             'playersNeeded',

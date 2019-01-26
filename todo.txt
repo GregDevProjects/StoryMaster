@@ -1,10 +1,9 @@
 -------TODO-------
 write tests for turns 
 
-As a user, I want to know many people that are currently in the game
-    -update the results more often
-        -on user joining 
-        -on user leaving
+game breaks when using the splash screen
+captcha
+
 /------TODO-------
 
 -------Architecture-------
@@ -21,8 +20,6 @@ As a user, I want to be able to learn how to play the game
     -help button is on the bottom right of every page 
     -opens modal on click?
 
-
-
 As a user, I want to know when the server is down
     - boot to name screen with message
 
@@ -36,5 +33,4 @@ As a user, I want to know when the server is down
 -------Security-------
     - only accept requests from approved sites 
     - can't play if on the same ip 
-    - captcha
 /-------Security-------
