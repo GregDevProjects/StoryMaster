@@ -6,7 +6,7 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import StatusLoader from '../components/StatusLoader';
 
-import { connect, onConnection, submitName, unsubscribeListener } from '../socketApi'
+import { onConnection, submitName, unsubscribeListener } from '../socketApi'
 
 export default class NameScreen extends React.Component {
 
@@ -16,7 +16,7 @@ export default class NameScreen extends React.Component {
             isLoading: true,
             isValidInput: false
           };
-        connect();
+        
         onConnection(() => {
             this.setState({
                 isLoading: false

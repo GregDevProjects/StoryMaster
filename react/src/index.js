@@ -11,7 +11,7 @@ import GameOverScreen from './screens/GameOverScreen';
 import StoryDrawer from './components/StoryDrawer';
 import ScoreDrawer from './components/ScoreDrawer';
 import FabIconButton from './components/FabIconButton';
-import { onStoryResultUpdate, onGameOver, onWaitingForPlayersToContinueGame } from './socketApi';
+import { onStoryResultUpdate, onGameOver, onWaitingForPlayersToContinueGame, connect } from './socketApi';
 
 const PAGES = {
     'SplashScreen' : SplashScreen,
@@ -28,16 +28,14 @@ export default class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = { 
-            currentPage: PAGES['NameScreen'],
+            currentPage: PAGES['SplashScreen'],
             showStory: false,
             showScore: false
         };
     }
 
-    componentDidMount() {
-        if (this.state.currentPage === PAGES['SplashScreen']) {
-            return;
-        }
+    startGlobalSocket() {
+        connect();
         onStoryResultUpdate((story, score) => {
             this.setState({
                 story: story,
@@ -67,10 +65,18 @@ export default class App extends React.Component {
         })
     }
 
-    changeScreen(newPage, otherProps) { 
+    changeScreen(newPage, otherProps) {
+        console.log(newPage)
         if (!PAGES[newPage]) {
             console.warn('newPage must be a key in PAGES');
             return;
+        }
+
+        if (newPage === 'NameScreen') {
+            console.log(
+                'called'
+            )
+            this.startGlobalSocket();
         }
 
         this.setState(
@@ -85,7 +91,7 @@ export default class App extends React.Component {
         return <React.Fragment>
             <FabIconButton
             position="right"
-            fontAwesomeIcon="fas fa-list-ol"
+            fontAwesomeIcon="fas fa-user"
             onClick={ ()=>{ this.setState({showScore: true}) } }
             />
             <FabIconButton
@@ -110,13 +116,13 @@ export default class App extends React.Component {
         const CurrentPage = this.state.currentPage;
         const currentPageProps = this.state.currentPageProps;
         const gameIsInProgress = (CurrentPage !== PAGES['NameScreen'] && CurrentPage !== PAGES['SplashScreen']);
-        console.log(gameIsInProgress)
         return (
             <React.Fragment>
                 <CssBaseline />
                 <CurrentPage 
                     changeScreen={this.changeScreen.bind(this)} 
                     props={currentPageProps}
+                    story={this.state.story}
                 />
                 { gameIsInProgress ? this.getScoreAndStoryButtons() : <div></div> }
             </React.Fragment>

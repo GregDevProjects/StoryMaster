@@ -2,7 +2,18 @@
 write tests for turns 
 
 game breaks when using the splash screen
+
 captcha
+
+As a user, I want to know when the server is down
+    - boot to name screen with message
+
+As a user, I want to be able to learn how to play the game
+    -help button is on the bottom right of every page 
+    -opens modal on click?
+
+Get some idea of how to moniter the server resources avialable, if possible prevent game from making rooms when at max capacity  
+
 
 /------TODO-------
 
@@ -16,12 +27,7 @@ use heroku config variables for stuff
 /-------Architecture-------
 
 -------User Stories-------
-As a user, I want to be able to learn how to play the game
-    -help button is on the bottom right of every page 
-    -opens modal on click?
-
-As a user, I want to know when the server is down
-    - boot to name screen with message
+As a user, I want my name highlighted so that I know who I am at a glance 
 
 /-------User Stories-------
 
