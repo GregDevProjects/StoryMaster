@@ -12,6 +12,7 @@ import StoryDrawer from './components/StoryDrawer';
 import ScoreDrawer from './components/ScoreDrawer';
 import FabIconButton from './components/FabIconButton';
 import { onStoryResultUpdate, onGameOver, onWaitingForPlayersToContinueGame, connect } from './socketApi';
+import MetaTags from 'react-meta-tags';
 
 const PAGES = {
     'SplashScreen' : SplashScreen,
@@ -118,6 +119,10 @@ export default class App extends React.Component {
         const gameIsInProgress = (CurrentPage !== PAGES['NameScreen'] && CurrentPage !== PAGES['SplashScreen']);
         return (
             <React.Fragment>
+                <MetaTags>
+                <title>test</title>
+                <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width"/>
+                </MetaTags>
                 <CssBaseline />
                 <CurrentPage 
                     changeScreen={this.changeScreen.bind(this)} 
@@ -126,6 +131,7 @@ export default class App extends React.Component {
                 />
                 { gameIsInProgress ? this.getScoreAndStoryButtons() : <div></div> }
             </React.Fragment>
+
         )
     }
 }

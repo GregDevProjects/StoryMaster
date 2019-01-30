@@ -3,11 +3,18 @@ import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import FabIconButton from '../components/FabIconButton'
 import Typography from '@material-ui/core/Typography';
+import ReCAPTCHA from "react-google-recaptcha";
+
+const SITE_KEY = "6LdWwo0UAAAAAAmTpjBgcF1AWr2kvhT0YWa_9EX1";
 
 export default class SplashScreen extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {quote : null}
+        this.state = {
+            quote: null,
+            captchaClicked: false,
+            load: false
+        }
         this.displayRandomQuote();     
     }
 
@@ -24,6 +31,10 @@ export default class SplashScreen extends React.Component {
             this.props.changeScreen('NameScreen');
         }
     }
+
+    handleCaptcha = value => {
+        this.setState({captchaClicked: true});
+    };
 
     displayRandomQuote() {
         const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
@@ -77,6 +88,16 @@ export default class SplashScreen extends React.Component {
                     >
                     <Quote quote={this.state.quote}/>
                     </Grid>
+                    <Grid
+                        item
+                        xs={12}
+                    >
+                        <ReCAPTCHA
+                            style={{ margin: "0 auto",width: "303px" }}
+                            sitekey={SITE_KEY}
+                            onChange={this.handleCaptcha}
+                        />
+                    </Grid>
 
                     <Typography
                         variant="button"
@@ -88,6 +109,7 @@ export default class SplashScreen extends React.Component {
                         onClick={()=>{
                             this.props.changeScreen('NameScreen');
                         }}
+                        disabled={!this.state.captchaClicked}
                     >
                         START
                     </Button>
