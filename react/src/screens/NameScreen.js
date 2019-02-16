@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import StatusLoader from '../components/StatusLoader';
+import HelpDialog from '../components/HelpDialog';
 
 import { onConnection, submitName, unsubscribeListener } from '../socketApi'
 
@@ -19,7 +20,8 @@ export default class NameScreen extends React.Component {
         
         onConnection(() => {
             this.setState({
-                isLoading: false
+                isLoading: false,
+                showHelp: false
             })
         });
     }
@@ -112,9 +114,13 @@ export default class NameScreen extends React.Component {
                 <FabIconButton
                     position="right"
                     fontAwesomeIcon="fas fa-question"
-                    onClick={ ()=>{ this.setState({showScore: true}) } }
+                    onClick={ ()=>{ this.setState({showHelp: true}) } }
                    
-                />         
+                />
+                <HelpDialog
+                    open={this.state.showHelp}
+                    close={() => { this.setState({showHelp: false})}}
+                />   
             </React.Fragment>
             
         );

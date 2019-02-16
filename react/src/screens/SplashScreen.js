@@ -4,6 +4,7 @@ import Button from '@material-ui/core/Button';
 import FabIconButton from '../components/FabIconButton'
 import Typography from '@material-ui/core/Typography';
 import ReCAPTCHA from "react-google-recaptcha";
+import HelpDialog from '../components/HelpDialog';
 
 const SITE_KEY = "6LdWwo0UAAAAAAmTpjBgcF1AWr2kvhT0YWa_9EX1";
 
@@ -13,7 +14,8 @@ export default class SplashScreen extends React.Component {
         this.state = {
             quote: null,
             captchaClicked: false,
-            load: false
+            load: false,
+            showHelp: false
         }
         this.displayRandomQuote();     
     }
@@ -118,7 +120,11 @@ export default class SplashScreen extends React.Component {
                 <FabIconButton
                     position="right"
                     fontAwesomeIcon="fas fa-question"
-                    onClick={ ()=>{ alert('help') } }
+                    onClick={ ()=>{ this.setState({showHelp: true})} }
+                />
+                <HelpDialog
+                    open={this.state.showHelp}
+                    close={() => { this.setState({showHelp: false})}}
                 />
             </React.Fragment>
         )

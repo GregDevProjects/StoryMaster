@@ -4,11 +4,8 @@ import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
-export default class FindingGameScreen extends React.Component {
+export default class ErrorScreen extends React.Component {
 
-    constructor(props) {
-        super(props);
-    }
     componentDidMount() {
         loadCSS(
           'https://use.fontawesome.com/releases/v5.1.0/css/all.css',
@@ -17,7 +14,6 @@ export default class FindingGameScreen extends React.Component {
     }
 
     render() {
-        const { classes } = this.props;
         return (
             <React.Fragment>
                 <Typography
