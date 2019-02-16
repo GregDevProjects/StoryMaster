@@ -15,13 +15,13 @@ export default class NameScreen extends React.Component {
         super(props);
         this.state = {
             isLoading: true,
-            isValidInput: false
+            isValidInput: false,
+            showHelp: false
           };
         
         onConnection(() => {
             this.setState({
-                isLoading: false,
-                showHelp: false
+                isLoading: false              
             })
         });
     }
