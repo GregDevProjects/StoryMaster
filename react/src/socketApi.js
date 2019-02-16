@@ -13,6 +13,13 @@ const NEXT_GAME_TIMER_STATUS = 4;
 
 //TODO: implement waitingRoundFinish
 
+export function onLostConnectionToServer(callBack) {
+    socket.io.on('connect_error', function(err) {
+        console.warn(err);
+        callBack();
+    }); 
+}
+
 export function onJoinedGameInProgress(callBack) {
     socket.on('waitingRoundFinish', function(story){
         callBack(story);

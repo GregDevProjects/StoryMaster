@@ -8,10 +8,11 @@ import WritingScreen from './screens/WritingScreen';
 import VotingScreen from './screens/VotingScreen';
 import RoundResultsScreen from './screens/RoundResultsScreen';
 import GameOverScreen from './screens/GameOverScreen';
+import ErrorScreen from './screens/ErrorScreen'
 import StoryDrawer from './components/StoryDrawer';
 import ScoreDrawer from './components/ScoreDrawer';
 import FabIconButton from './components/FabIconButton';
-import { onStoryResultUpdate, onGameOver, onWaitingForPlayersToContinueGame, connect } from './socketApi';
+import { onStoryResultUpdate, onGameOver, onWaitingForPlayersToContinueGame, connect, onLostConnectionToServer } from './socketApi';
 import MetaTags from 'react-meta-tags';
 
 const PAGES = {
@@ -21,7 +22,8 @@ const PAGES = {
     'WritingScreen' : WritingScreen,
     'VotingScreen' : VotingScreen,
     'RoundResultsScreen' : RoundResultsScreen,
-    'GameOverScreen' : GameOverScreen
+    'GameOverScreen' : GameOverScreen,
+    'ErrorScreen' : ErrorScreen
 }
 
 export default class App extends React.Component {
@@ -63,7 +65,12 @@ export default class App extends React.Component {
                     storyWillContinue: true
                 }
             )
-        })
+        });
+        onLostConnectionToServer(() => {
+            this.changeScreen(
+                'ErrorScreen'
+            )
+        });
     }
 
     changeScreen(newPage, otherProps) {
@@ -74,9 +81,6 @@ export default class App extends React.Component {
         }
 
         if (newPage === 'NameScreen') {
-            console.log(
-                'called'
-            )
             this.startGlobalSocket();
         }
 
@@ -116,7 +120,11 @@ export default class App extends React.Component {
     render() {
         const CurrentPage = this.state.currentPage;
         const currentPageProps = this.state.currentPageProps;
-        const gameIsInProgress = (CurrentPage !== PAGES['NameScreen'] && CurrentPage !== PAGES['SplashScreen']);
+        const gameIsInProgress = (
+            CurrentPage !== PAGES['NameScreen'] &&
+            CurrentPage !== PAGES['SplashScreen'] &&
+            CurrentPage !== PAGES['ErrorScreen']
+        );
         return (
             <React.Fragment>
                 <MetaTags>
@@ -131,7 +139,6 @@ export default class App extends React.Component {
                 />
                 { gameIsInProgress ? this.getScoreAndStoryButtons() : <div></div> }
             </React.Fragment>
-
         )
     }
 }
