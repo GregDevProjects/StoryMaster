@@ -1,11 +1,10 @@
 -------TODO-------
 write tests for turns 
 
-
-As a user, I want to be able to learn how to play the game
-    -help button is on the bottom right of every page 
-    -opens modal on click?
-
+-no writers/users after game over
+-limit writing length
+-enable logging of rooms/players
+-buy a dyno?
 
 Get some idea of how to moniter the server resources avialable, if possible prevent game from making rooms when at max capacity  
 

@@ -126,7 +126,7 @@ export default class App extends React.Component {
             CurrentPage !== PAGES['ErrorScreen']
         );
         return (
-            <React.Fragment>
+            <div style={{height: "800px", overflowY: "scroll"}} >
                 <MetaTags>
                 <title>test</title>
                 <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width"/>
@@ -138,9 +138,9 @@ export default class App extends React.Component {
                     story={this.state.story}
                 />
                 { gameIsInProgress ? this.getScoreAndStoryButtons() : <div></div> }
-            </React.Fragment>
+            </div>
         )
     }
 }
 
-ReactDOM.render(<App />, document.querySelector('#app'));
+ReactDOM.render(<App/>, document.querySelector('#app'));
