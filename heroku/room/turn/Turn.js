@@ -14,10 +14,10 @@ const TurnStatus = {
     GAME_OVER: 4
 }
 
-const SECONDS_TO_WRITE = 30;
+const SECONDS_TO_WRITE = 60;
 const SECONDS_TO_VOTE = 20;
-const SECONDS_TO_SHOW_ROUND_RESULTS = 5; //5
-const SECONDS_TO_SHOW_GAME_OVER = 10; //10
+const SECONDS_TO_SHOW_ROUND_RESULTS = 5;
+const SECONDS_TO_SHOW_GAME_OVER = 30;
 const ROUNDS_PER_GAME = 10;
 const WRITING_START_MESSAGE = 'writing';
 const VOTING_START_MESSAGE = 'vote';
@@ -93,6 +93,7 @@ function Turn(roomId, usersInRoom) {
 
     this.startTurns = async function() {
         this.turnsHaveStarted = true;
+        this.broadcastGameScoresAndStory();
         for(let i = 0; i < ROUNDS_PER_GAME; i++) {
             usersInRoom.forEach(aUser => {aUser.isApprovedToPlayInTurns = true;});
             broadcastToRoomId(

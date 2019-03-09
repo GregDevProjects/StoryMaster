@@ -38,5 +38,5 @@ function startCpuUsageLogs() {
         // console.log(os.totalmem());
         // console.log(os.freemem());
         console.log(os.freemem()/os.totalmem());
-    } , 2000)
+    } , 2500)
 }

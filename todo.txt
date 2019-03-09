@@ -13,9 +13,6 @@ Get some idea of how to moniter the server resources avialable, if possible prev
 
 -------Architecture-------
 move listeners from the api that involve screen changes to index.js
-have an option to force a resolution on the game (for newgrounds)
-    - ??? x 820px
-find a way to moniter memory on server
 use heroku config variables for stuff
     -timer length 
 /-------Architecture-------
